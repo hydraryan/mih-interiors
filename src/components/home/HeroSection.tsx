@@ -41,7 +41,7 @@ export default function HeroSection({ imageSrc = '/hero_image.jpg' }: { imageSrc
       {/* ── Main Content: Perfectly Centered ── */}
       <motion.div 
         style={{ opacity: contentOpacity }}
-        className="relative z-10 w-full px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center pt-20 sm:pt-28 pb-8"
+        className="relative z-10 w-full px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center pt-32 sm:pt-28 pb-8"
       >
         <div className="max-w-4xl w-full flex flex-col items-center text-center">
 
@@ -52,7 +52,7 @@ export default function HeroSection({ imageSrc = '/hero_image.jpg' }: { imageSrc
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 transition={{ delay: 0.3, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] text-brown-900 leading-none tracking-tight"
+                className="font-display text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[6.5rem] text-brown-900 leading-none tracking-tight"
               >
                 Your Dream Space
               </motion.h1>
@@ -62,7 +62,7 @@ export default function HeroSection({ imageSrc = '/hero_image.jpg' }: { imageSrc
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 transition={{ delay: 0.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] text-brown-800 leading-[1.1]"
+                className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[5rem] text-brown-800 leading-[1.1]"
               >
                 Starts <span className="italic font-light">with Artistry.</span>
               </motion.h2>
