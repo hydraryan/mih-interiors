@@ -15,6 +15,11 @@ export const authOptions: NextAuthOptions = {
         const adminId = process.env.ADMIN_ID?.trim()
         const adminPassword = process.env.ADMIN_PASSWORD
 
+        // Help debug in Vercel logs (without showing password)
+        console.log('Login attempt for ID:', credentials?.adminId)
+        console.log('Configured Admin ID exists:', !!adminId)
+        console.log('Configured Password exists:', !!adminPassword)
+
         if (!adminId || !adminPassword) {
           console.error('CRITICAL: ADMIN_ID and ADMIN_PASSWORD are not configured in environment variables.')
           throw new Error('Server configuration error.')
@@ -24,6 +29,7 @@ export const authOptions: NextAuthOptions = {
           credentials?.adminId?.trim() === adminId &&
           credentials?.password === adminPassword
         ) {
+          console.log('Login successful for:', adminId)
           return {
             id: adminId,
             name: 'Mohit Mahajan',
@@ -31,6 +37,7 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
+        console.warn('Login failed: Invalid credentials.')
         return null
       },
     }),
