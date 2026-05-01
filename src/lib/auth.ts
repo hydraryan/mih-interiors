@@ -41,18 +41,5 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
   },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        // In production, we use the base domain to share session across all subdomains
-        domain: process.env.NODE_ENV === 'production' ? '.mihinteriors.in' : 'localhost',
-      },
-    },
-  },
   secret: process.env.NEXTAUTH_SECRET,
 }
