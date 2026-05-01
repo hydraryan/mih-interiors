@@ -6,22 +6,34 @@ const PROTECTED_API_PREFIXES = ['/api/admin']
 const PROTECTED_MUTATION_PREFIXES = ['/api/blogs', '/api/projects', '/api/services']
 const PROTECTED_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
-function isProtectedMutation(pathname: string, method: string) {
-  return PROTECTED_METHODS.has(method) && PROTECTED_MUTATION_PREFIXES.some((prefix) => {
-    return pathname === prefix || pathname.startsWith(`${prefix}/`)
-  })
-}
+const MAIN_DOMAIN = 'mihinteriors.in'
 
 export default async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') || ''
   const url = request.nextUrl.clone()
   const pathname = url.pathname
   const method = request.method.toUpperCase()
 
-  // STRICT AUTHENTICATION LOGIC (Subdomains are fully ignored here)
+  // 1. REDIRECT SUBDOMAINS TO MAIN DOMAIN PATHS
+  // This honors the "remove all subdomains" request while helping the user transition.
+  if (hostname.includes('admin.') && !pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/admin${pathname === '/' ? '' : pathname}`, request.url))
+  }
+  if (hostname.includes('services.') && !pathname.startsWith('/services')) {
+    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/services${pathname === '/' ? '' : pathname}`, request.url))
+  }
+  if (hostname.includes('projects.') && !pathname.startsWith('/projects')) {
+    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/projects${pathname === '/' ? '' : pathname}`, request.url))
+  }
+  if (hostname.includes('blogs.') && !pathname.startsWith('/blogs')) {
+    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/blogs${pathname === '/' ? '' : pathname}`, request.url))
+  }
+
+  // 2. AUTHENTICATION PROTECTION
   const requiresAuth =
     (!PUBLIC_ADMIN_PATHS.has(pathname) && pathname.startsWith('/admin')) ||
     PROTECTED_API_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)) ||
-    isProtectedMutation(pathname, method)
+    PROTECTED_METHODS.has(method) && PROTECTED_MUTATION_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 
   if (requiresAuth) {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
