@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { signOut } from 'next-auth/react'
 import { urls } from '@/lib/urls'
 import {
@@ -51,6 +51,11 @@ function getSectionSubtitle(pathname: string) {
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
 
   const activeTitle = useMemo(() => getSectionTitle(pathname), [pathname])
   const activeSubtitle = useMemo(() => getSectionSubtitle(pathname), [pathname])
@@ -203,7 +208,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 rounded-2xl border px-4 py-4 transition-colors ${
                       isActive ? 'border-brown-200 bg-white' : 'border-transparent bg-white/70 hover:border-cream-200'
                     }`}
@@ -221,7 +225,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <Link
                 href="/"
-                onClick={() => setMobileMenuOpen(false)}
                 className="rounded-2xl border border-charcoal-900/10 bg-white px-4 py-3 text-center text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-700"
               >
                 Open site
