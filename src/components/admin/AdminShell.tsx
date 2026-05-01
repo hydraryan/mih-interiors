@@ -87,7 +87,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <nav className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+              const isActive = item.href === '/admin' 
+                ? pathname === '/admin' 
+                : pathname === item.href || pathname.startsWith(`${item.href}/`)
 
               return (
                 <Link
@@ -193,7 +195,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <nav className="space-y-2">
               {navItems.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+                const isActive = item.href === '/admin' 
+                  ? pathname === '/admin' 
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`)
 
                 return (
                   <Link
