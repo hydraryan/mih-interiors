@@ -14,14 +14,15 @@ export default async function middleware(request: NextRequest) {
   const pathname = url.pathname
   const method = request.method.toUpperCase()
 
+  const isApiPath = pathname.startsWith('/api/')
+
   // 1. ADMIN SUBDOMAIN REWRITE
-  // If user is on admin.mihinteriors.in, we rewrite /foo to /admin/foo
-  if (hostname.startsWith('admin.')) {
+  // Only rewrite non-API paths for the admin subdomain
+  if (hostname.startsWith('admin.') && !isApiPath) {
     if (!pathname.startsWith('/admin')) {
       url.pathname = `/admin${pathname === '/' ? '' : pathname}`
-      // IMPORTANT: After rewriting, we proceed to check auth on the rewritten path
     }
-  } else {
+  } else if (!hostname.startsWith('admin.') && !hostname.startsWith(MAIN_DOMAIN)) {
     // 2. CONSOLIDATE OTHER SUBDOMAINS (Services, Projects, Blogs) to Main Domain
     if (hostname.includes('services.') || hostname.includes('projects.') || hostname.includes('blogs.')) {
       let targetPath = pathname
@@ -48,16 +49,18 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
       }
 
-      const loginUrl = new URL('/admin/login', request.url)
-      // If we are on the subdomain, loginUrl will be admin.mihinteriors.in/admin/login
-      // which our middleware handles (no redirect loop because of startsWith('/admin') check above)
-      loginUrl.searchParams.set('callbackUrl', `${pathname}${request.nextUrl.search}`)
-      return NextResponse.redirect(loginUrl)
+      // Ensure login redirect goes to the correct domain/path
+      const loginTarget = hostname.startsWith('admin.') 
+        ? new URL('/admin/login', request.url)
+        : new URL(`https://${MAIN_DOMAIN}/admin/login`, request.url)
+      
+      loginTarget.searchParams.set('callbackUrl', `${pathname}${request.nextUrl.search}`)
+      return NextResponse.redirect(loginTarget)
     }
   }
 
   // If we performed a rewrite for the admin subdomain, return the rewrite
-  if (hostname.startsWith('admin.') && url.pathname !== pathname) {
+  if (hostname.startsWith('admin.') && !isApiPath && url.pathname !== pathname) {
     return NextResponse.rewrite(url)
   }
 

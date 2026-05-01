@@ -114,7 +114,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
         <div className="border-t border-cream-200 p-6">
           <button
-            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            onClick={() => signOut({ callbackUrl: urls.admin('/login') })}
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-charcoal-900/10 bg-charcoal-900 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.26em] text-white transition-colors hover:bg-brown-900"
           >
             <LogOut className="h-4 w-4" />
@@ -149,7 +149,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 Open site
               </Link>
               <button
-                onClick={() => signOut({ callbackUrl: '/admin/login' })}
+                onClick={() => signOut({ callbackUrl: urls.admin('/login') })}
                 className="inline-flex items-center gap-2 rounded-full bg-charcoal-900 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-white shadow-lg shadow-charcoal-900/10 transition-colors hover:bg-brown-900"
               >
                 <LogOut className="h-3.5 w-3.5" />
@@ -223,7 +223,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 Open site
               </Link>
               <button
-                onClick={() => signOut({ callbackUrl: '/admin/login' })}
+                onClick={() => signOut({ callbackUrl: urls.admin('/login') })}
                 className="rounded-2xl bg-charcoal-900 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white"
               >
                 Logout
