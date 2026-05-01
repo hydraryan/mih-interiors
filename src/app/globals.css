@@ -1,26 +1,84 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-cream-50: #FEFCF9;
+  --color-cream-100: #FAF8F4;
+  --color-cream-200: #F0F0F0;
+  
+  --color-blush-300: #E8C9CF;
+  --color-blush-400: #D4A5AE;
+  
+  --color-brown-700: #3D2B0F;
+  --color-brown-800: #3D1F0D;
+  --color-brown-900: #2A1508;
+  
+  --color-charcoal-800: #333333;
+  --color-charcoal-900: #1A1A1A;
+
+  --font-display: var(--font-outfit);
+  --font-body: var(--font-jakarta);
+  
+  --animate-fade-up: fadeUp 0.6s ease-out forwards;
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAF8F4;
+  --foreground: #333333;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.font-display-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Scroll indicator animation (for .scroll-indicator-fill) */
+.scroll-indicator-fill {
+  animation: scrollFill 1.8s linear infinite;
+}
+@keyframes scrollFill {
+  0% { top: 0; opacity: 0.9; }
+  80% { top: 24px; opacity: 0.9; }
+  100% { top: 36px; opacity: 0; }
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.admin-login-input:-webkit-autofill,
+.admin-login-input:-webkit-autofill:hover,
+.admin-login-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1A1A1A;
+  box-shadow: 0 0 0 1000px #fbf7f1 inset;
+  transition: background-color 9999s ease-in-out 0s;
 }

@@ -16,6 +16,32 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Setup
+
+Copy [.env.example](.env.example) to `.env.local` and fill in the values before running the app.
+
+Required variables:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `ADMIN_ID`
+- `ADMIN_PASSWORD`
+- `ADMIN_EMAIL`
+
+Optional variables for the admin media manager and analytics dashboard:
+
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+- `GA4_PROPERTY_ID`
+- `GA4_SERVICE_ACCOUNT_EMAIL`
+- `GA4_PRIVATE_KEY`
+- `GSC_SITE_URL`
+- `GSC_SERVICE_ACCOUNT_EMAIL`
+- `GSC_PRIVATE_KEY`
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
