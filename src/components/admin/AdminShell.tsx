@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { signOut } from 'next-auth/react'
+import { urls } from '@/lib/urls'
 import {
   LayoutDashboard,
   Building2,
@@ -19,12 +20,12 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', description: 'Analytics and lead signals', icon: LayoutDashboard },
-  { href: '/admin/leads', label: 'Leads', description: 'Chatbot captured inquiries', icon: ShieldCheck },
-  { href: '/admin/services', label: 'Services', description: 'Service pages and content', icon: Building2 },
-  { href: '/admin/projects', label: 'Projects', description: 'Portfolio and featured work', icon: FolderKanban },
-  { href: '/admin/blogs', label: 'Blogs', description: 'Editorial and SEO posts', icon: Newspaper },
-  { href: '/admin/media', label: 'Media', description: 'Public asset library', icon: Images },
+  { href: urls.admin('/'), label: 'Dashboard', description: 'Analytics and lead signals', icon: LayoutDashboard },
+  { href: urls.admin('/leads'), label: 'Leads', description: 'Chatbot captured inquiries', icon: ShieldCheck },
+  { href: urls.admin('/services'), label: 'Services', description: 'Service pages and content', icon: Building2 },
+  { href: urls.admin('/projects'), label: 'Projects', description: 'Portfolio and featured work', icon: FolderKanban },
+  { href: urls.admin('/blogs'), label: 'Blogs', description: 'Editorial and SEO posts', icon: Newspaper },
+  { href: urls.admin('/media'), label: 'Media', description: 'Public asset library', icon: Images },
 ]
 
 function getSectionTitle(pathname: string) {
