@@ -14,19 +14,19 @@ export default async function middleware(request: NextRequest) {
   const pathname = url.pathname
   const method = request.method.toUpperCase()
 
-  // 1. REDIRECT SUBDOMAINS TO MAIN DOMAIN PATHS
-  // This honors the "remove all subdomains" request while helping the user transition.
-  if (hostname.includes('admin.') && !pathname.startsWith('/admin')) {
-    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/admin${pathname === '/' ? '' : pathname}`, request.url))
-  }
-  if (hostname.includes('services.') && !pathname.startsWith('/services')) {
-    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/services${pathname === '/' ? '' : pathname}`, request.url))
-  }
-  if (hostname.includes('projects.') && !pathname.startsWith('/projects')) {
-    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/projects${pathname === '/' ? '' : pathname}`, request.url))
-  }
-  if (hostname.includes('blogs.') && !pathname.startsWith('/blogs')) {
-    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}/blogs${pathname === '/' ? '' : pathname}`, request.url))
+  // 1. FORCE CONSOLIDATION: Redirect ALL subdomain traffic to the main domain.
+  // This is the cleanest way to "remove all subdomain things" and fix login.
+  if (hostname.includes('admin.') || hostname.includes('services.') || hostname.includes('projects.') || hostname.includes('blogs.')) {
+    // If the hostname contains a subdomain, redirect to the main domain immediately.
+    // We preserve the path: admin.mihinteriors.in/login -> mihinteriors.in/admin/login (if needed)
+    // Actually, simple concatenation is better:
+    let targetPath = pathname
+    if (hostname.startsWith('admin.') && !pathname.startsWith('/admin')) targetPath = `/admin${pathname === '/' ? '' : pathname}`
+    if (hostname.startsWith('services.') && !pathname.startsWith('/services')) targetPath = `/services${pathname === '/' ? '' : pathname}`
+    if (hostname.startsWith('projects.') && !pathname.startsWith('/projects')) targetPath = `/projects${pathname === '/' ? '' : pathname}`
+    if (hostname.startsWith('blogs.') && !pathname.startsWith('/blogs')) targetPath = `/blogs${pathname === '/' ? '' : pathname}`
+
+    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}${targetPath}`, request.url))
   }
 
   // 2. AUTHENTICATION PROTECTION
