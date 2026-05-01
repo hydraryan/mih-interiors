@@ -1,3 +1,4 @@
+import dbConnect from '@/lib/mongodb'
 import Lead from '@/lib/models/Lead'
 import ChatbotEvent from '@/lib/models/ChatbotEvent'
 
@@ -32,6 +33,7 @@ export type ChatbotMetrics = {
 const roundTwo = (value: number) => Math.round(value * 100) / 100
 
 export async function getChatbotMetrics(): Promise<ChatbotMetrics> {
+  await dbConnect()
   const [
     totalLeads,
     startedConversations,

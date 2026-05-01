@@ -1,4 +1,5 @@
 import { SignJWT, importPKCS8 } from 'jose'
+import dbConnect from '@/lib/mongodb'
 import Lead from '@/lib/models/Lead'
 import ChatbotEvent from '@/lib/models/ChatbotEvent'
 import BlogPost from '@/lib/models/BlogPost'
@@ -314,6 +315,7 @@ async function getSearchConsoleInsights() {
 }
 
 export async function buildAdminAnalytics() {
+  await dbConnect()
   const [chatbot, traffic, searchConsole, totalLeads, blogCount, projectCount, serviceCount, mediaCount, recentLeads, recentEvents] = await Promise.all([
     getChatbotMetrics(),
     getTrafficInsights(),
