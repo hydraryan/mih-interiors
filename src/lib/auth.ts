@@ -16,7 +16,8 @@ export const authOptions: NextAuthOptions = {
         const adminPassword = process.env.ADMIN_PASSWORD
 
         if (!adminId || !adminPassword) {
-          throw new Error('ADMIN_ID and ADMIN_PASSWORD must be configured before admin sign-in.')
+          console.error('CRITICAL: ADMIN_ID and ADMIN_PASSWORD are not configured in environment variables.')
+          throw new Error('Server configuration error.')
         }
 
         if (
@@ -39,6 +40,19 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        // In production, we use the base domain to share session across all subdomains
+        domain: process.env.NODE_ENV === 'production' ? '.mihinteriors.in' : 'localhost',
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
