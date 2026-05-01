@@ -1,6 +1,12 @@
 const { MongoClient } = require('mongodb');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(process.cwd(), '.env.local') });
 
-const uri = 'mongodb+srv://aryanrajput5699_db_user:O65gNbKB8aiafDgI@cluster0.byoxunj.mongodb.net/mih_interiors?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  console.error('MONGODB_URI is not defined in .env.local');
+  process.exit(1);
+}
 const client = new MongoClient(uri);
 
 async function run() {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const path = require('path');
+require('dotenv').config({ path: path.resolve(process.cwd(), '.env.local') });
 
 const MONGODB_URI = process.env.MONGODB_URI;
 

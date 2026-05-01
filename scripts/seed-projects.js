@@ -63,9 +63,15 @@ const SEED_PROJECTS = [
   }
 ];
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(process.cwd(), '.env.local') });
+
 async function seed() {
   try {
-    const MONGODB_URI = "mongodb+srv://aryanrajput5699_db_user:O65gNbKB8aiafDgI@cluster0.byoxunj.mongodb.net/mih_interiors?retryWrites=true&w=majority&appName=Cluster0";
+    const MONGODB_URI = process.env.MONGODB_URI;
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is not defined in .env.local');
+    }
     await mongoose.connect(MONGODB_URI);
     console.log("Connected to MongoDB.");
 

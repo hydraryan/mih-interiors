@@ -2,9 +2,17 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 
-const uri = 'mongodb+srv://aryanrajput5699_db_user:O65gNbKB8aiafDgI@cluster0.byoxunj.mongodb.net/mih_interiors?retryWrites=true&w=majority&appName=Cluster0';
+// Load environment variables from .env.local
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+
+const uri = process.env.MONGODB_URI;
 
 async function test() {
+  if (!uri) {
+    console.error('MONGODB_URI is not defined in .env.local');
+    process.exit(1);
+  }
+
   console.log('Testing connection to Atlas...');
   try {
     await mongoose.connect(uri);
