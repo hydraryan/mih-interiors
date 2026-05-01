@@ -170,8 +170,17 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-charcoal-900/45 backdrop-blur-sm lg:hidden">
-          <div className="absolute inset-y-0 left-0 w-[88%] max-w-sm border-r border-white/10 bg-[#f6efe6] p-5 shadow-2xl shadow-charcoal-900/20">
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop Button (Must be BEFORE the drawer in DOM to sit behind it) */}
+          <button 
+            className="absolute inset-0 h-full w-full bg-charcoal-900/45 backdrop-blur-sm cursor-default" 
+            onClick={() => setMobileMenuOpen(false)} 
+            aria-label="Close overlay" 
+            tabIndex={-1}
+          />
+          
+          {/* Menu Drawer */}
+          <div className="absolute inset-y-0 left-0 z-10 w-[88%] max-w-sm border-r border-white/10 bg-[#f6efe6] p-5 shadow-2xl shadow-charcoal-900/20">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-charcoal-900 text-white">
@@ -237,7 +246,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </button>
             </div>
           </div>
-          <button className="absolute inset-0" onClick={() => setMobileMenuOpen(false)} aria-label="Close overlay" />
         </div>
       )}
     </div>
