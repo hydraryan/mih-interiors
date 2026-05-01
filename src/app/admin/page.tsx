@@ -106,7 +106,15 @@ export default function AdminDashboard() {
 
     const fetchAnalytics = async () => {
       try {
-        const response = await fetch('/api/admin/analytics', { cache: 'no-store' })
+        // Add cache buster to force mobile browsers to bypass stale edge/browser caches
+        const response = await fetch(`/api/admin/analytics?t=${Date.now()}`, { cache: 'no-store' })
+        
+        // Handle cases where the server returns an HTML error page (e.g. 404, 500)
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server returned an invalid response. Please refresh the page.')
+        }
+
         const body = (await response.json()) as AnalyticsResponse
 
         if (!response.ok || !body.success || !body.analytics) {
