@@ -14,15 +14,27 @@ export default async function middleware(request: NextRequest) {
   const pathname = url.pathname
   const method = request.method.toUpperCase()
 
+  const isApiPath = pathname.startsWith('/api/')
+
   // 1. STRICT DOMAIN CONSOLIDATION (NO REWRITES)
-  // Rewriting subdomains in Next.js App Router causes client-side routing and API breakages.
   // We strictly redirect all subdomains (admin, services, etc.) to their native paths on the main domain.
   if (hostname.includes('admin.') || hostname.includes('services.') || hostname.includes('projects.') || hostname.includes('blogs.')) {
     let targetPath = pathname
-    if (hostname.startsWith('admin.') && !pathname.startsWith('/admin')) targetPath = `/admin${pathname === '/' ? '' : pathname}`
-    if (hostname.startsWith('services.') && !pathname.startsWith('/services')) targetPath = `/services${pathname === '/' ? '' : pathname}`
-    if (hostname.startsWith('projects.') && !pathname.startsWith('/projects')) targetPath = `/projects${pathname === '/' ? '' : pathname}`
-    if (hostname.startsWith('blogs.') && !pathname.startsWith('/blogs')) targetPath = `/blogs${pathname === '/' ? '' : pathname}`
+    
+    // IMPORTANT FIX: Do NOT prepend /admin to API routes. They must remain /api/...
+    if (hostname.startsWith('admin.') && !pathname.startsWith('/admin') && !isApiPath) {
+      targetPath = `/admin${pathname === '/' ? '' : pathname}`
+    }
+    
+    if (hostname.startsWith('services.') && !pathname.startsWith('/services') && !isApiPath) {
+      targetPath = `/services${pathname === '/' ? '' : pathname}`
+    }
+    if (hostname.startsWith('projects.') && !pathname.startsWith('/projects') && !isApiPath) {
+      targetPath = `/projects${pathname === '/' ? '' : pathname}`
+    }
+    if (hostname.startsWith('blogs.') && !pathname.startsWith('/blogs') && !isApiPath) {
+      targetPath = `/blogs${pathname === '/' ? '' : pathname}`
+    }
     
     // Preserve search params (like callbackUrl) during redirect
     return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}${targetPath}${request.nextUrl.search}`, request.url))
