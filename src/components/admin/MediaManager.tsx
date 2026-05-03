@@ -261,6 +261,7 @@ export default function MediaManager() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [placement, setPlacement] = useState('all')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [form, setForm] = useState<MediaFormState>(emptyForm())
   const [message, setMessage] = useState<string | null>(null)
@@ -289,6 +290,7 @@ export default function MediaManager() {
       if (search) params.set('search', search)
       if (category !== 'all') params.set('category', category)
       if (statusFilter !== 'all') params.set('status', statusFilter)
+      if (placement !== 'all') params.set('placement', placement)
 
       const response = await fetch(`/api/admin/media?${params.toString()}`, { cache: 'no-store' })
       const body = (await response.json()) as ApiResponse
@@ -308,7 +310,7 @@ export default function MediaManager() {
     } finally {
       setLoading(false)
     }
-  }, [category, search, selectedId, statusFilter])
+  }, [category, search, selectedId, statusFilter, placement])
 
   useEffect(() => {
     void loadAssets()
@@ -583,21 +585,43 @@ export default function MediaManager() {
             </div>
           </div>
 
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-            {FOLDER_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setCategory(option.value)}
-                className={`shrink-0 rounded-md px-3 py-2 text-xs font-semibold transition ${
-                  category === option.value
-                    ? 'bg-[#f0dfc8] text-brown-900'
-                    : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+          <div className="mt-4 space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-charcoal-700 uppercase tracking-wide">Filter by page</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {['all', 'Homepage', 'Services', 'Projects', 'Blogs', 'About page', 'Gallery'].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setPlacement(option)}
+                    className={`rounded-md px-3 py-2 text-xs font-semibold transition ${
+                      placement === option
+                        ? 'bg-green-100 text-green-900'
+                        : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
+                    }`}
+                  >
+                    {option === 'all' ? 'All pages' : option}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {FOLDER_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setCategory(option.value)}
+                  className={`shrink-0 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                    category === option.value
+                      ? 'bg-[#f0dfc8] text-brown-900'
+                      : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {message && (

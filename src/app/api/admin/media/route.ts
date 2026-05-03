@@ -18,6 +18,7 @@ function buildQuery(params: URLSearchParams) {
   const category = params.get('category')?.trim()
   const sourceType = params.get('sourceType')?.trim()
   const status = params.get('status')?.trim()
+  const placement = params.get('placement')?.trim()
 
   if (search) {
     query.$or = [
@@ -39,6 +40,10 @@ function buildQuery(params: URLSearchParams) {
 
   if (status && status !== 'all') {
     query.status = status
+  }
+
+  if (placement && placement !== 'all') {
+    query.placements = { $in: [placement] }
   }
 
   return query
