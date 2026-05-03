@@ -136,6 +136,25 @@ export async function syncWebsiteMediaAssets() {
     }
   }
 
+  // ── Main Page Hero Images ──
+  const mainPageSeeds = [
+    { src: '/hero_image.jpg', title: 'Homepage Hero', placements: ['Homepage'] },
+    { src: '/services-hero.png', title: 'Services Hero', placements: ['Services'] },
+    { src: '/about-hero.png', title: 'About Hero', placements: ['About page'] },
+    { src: '/about-vision.png', title: 'About Vision', placements: ['About page'] },
+    { src: '/about-founder.png', title: 'About Founder', placements: ['About page'] },
+  ]
+
+  for (const item of mainPageSeeds) {
+    const seed = makeReferenceSeed(item.src, {
+      title: item.title,
+      folder: 'root',
+      placements: item.placements,
+      tags: ['hero', 'main-page'],
+    })
+    if (seed) referenceSeeds.push(seed)
+  }
+
   const seedsByKey = new Map<string, MediaReferenceSeed | Awaited<ReturnType<typeof scanPublicMediaAssets>>[number]>()
   for (const seed of [...publicSeeds, ...referenceSeeds]) {
     seedsByKey.set(seed.sourceKey, seed)

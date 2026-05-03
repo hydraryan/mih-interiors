@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Service from '@/lib/models/Service'
 
@@ -36,7 +37,9 @@ export async function POST(req: NextRequest) {
     }
 
     const service = await Service.create(body)
-    return NextResponse.json({ success: true, service })
+    revalidatePath('/', 'layout')
+    revalidatePath('/services')
+    return NextResponse.json({ success: true, service }, { status: 201 })
   } catch (err: any) {
     console.error('Admin API Error (POST /api/admin/services):', err)
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })

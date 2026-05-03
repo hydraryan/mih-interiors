@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Service from '@/lib/models/Service'
 
@@ -17,7 +18,12 @@ export async function PUT(
     const { id } = await params
     const body = await req.json()
 
-    const service = await Service.findByIdAndUpdate(id, body, { new: true })
+    const service = await Service.findByIdAndUpdate(id, body, { returnDocument: 'after' })
+    if (service) {
+      revalidatePath('/', 'layout')
+      revalidatePath('/services')
+      revalidatePath(`/services/${service.slug}`)
+    }
     if (!service) {
       return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 })
     }
@@ -42,6 +48,8 @@ export async function DELETE(
     await dbConnect()
     const { id } = await params
     await Service.findByIdAndDelete(id)
+    revalidatePath('/', 'layout')
+    revalidatePath('/services')
     return NextResponse.json({ success: true, message: 'Service deleted' })
   } catch (err: any) {
     console.error('Admin API Error (DELETE /api/admin/services/[id]):', err)
