@@ -252,7 +252,7 @@ function MediaPreview({
   return <img src={src} alt={alt} className={className || 'h-full w-full object-cover'} onError={() => setFailed(true)} loading="lazy" />
 }
 
-export default function MediaManager() {
+export default function MediaManager({ onSelect }: { onSelect?: (url: string) => void }) {
   const [assets, setAssets] = useState<MediaAsset[]>([])
   const [summary, setSummary] = useState<AssetSummary>({ total: 0, bySource: {}, byFolder: {} })
   const [loading, setLoading] = useState(true)
@@ -856,6 +856,18 @@ export default function MediaManager() {
                 Hide
               </button>
             </div>
+
+            {onSelect && (
+              <button
+                type="button"
+                onClick={() => onSelect(getDisplayPath(form))}
+                disabled={!getDisplayPath(form)}
+                className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-md bg-green-600 px-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg transition hover:bg-green-700 disabled:opacity-60"
+              >
+                <Check className="h-5 w-5" />
+                Select this photo
+              </button>
+            )}
 
             <button
               type="button"

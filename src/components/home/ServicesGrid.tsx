@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
-const services = [
+const FALLBACK_SERVICES = [
   {
     title: "Residential Interiors",
     description: "Premium designs for 1-4 BHK apartments, Villas, and Kothis with end-to-end execution.",
@@ -30,7 +30,20 @@ const services = [
   },
 ];
 
-export default function ServicesGrid({ imageMap = {} }: { imageMap?: Record<string, string> }) {
+interface ServicesGridProps {
+  imageMap?: Record<string, string>
+  initialServices?: any[]
+}
+
+export default function ServicesGrid({ imageMap = {}, initialServices = [] }: ServicesGridProps) {
+  const displayServices = initialServices.length > 0 
+    ? initialServices.map(s => ({
+        title: s.title,
+        description: s.shortDescription || s.hero?.subtitle || "",
+        link: `/services/${s.slug}`,
+        image: s.hero?.image || s.image || "/services-residential.jpg"
+      }))
+    : FALLBACK_SERVICES;
   return (
     <section className="bg-[#FAF8F4] py-24 md:py-32 overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
@@ -55,7 +68,7 @@ export default function ServicesGrid({ imageMap = {} }: { imageMap?: Record<stri
         {/* ── Unique Interactive Accordion ── */}
         <ScrollReveal delay={0.2}>
           <div className="flex flex-col lg:flex-row w-full h-[800px] lg:h-[650px] gap-4">
-            {services.map((service, index) => (
+            {displayServices.map((service, index) => (
               <div
                 key={service.title}
                 className="group relative flex-1 hover:flex-[2.5] lg:hover:flex-[3] transition-[flex] duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] rounded-3xl overflow-hidden cursor-pointer shadow-lg"

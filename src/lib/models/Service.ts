@@ -51,6 +51,7 @@ const ServiceSchema = new mongoose.Schema({
     enum: ['draft', 'published'], 
     default: 'draft' 
   },
+  showOnHomepage: { type: Boolean, default: false },
   order: { type: Number, default: 0 },
 }, { timestamps: true })
 
