@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: "Best Interior Designer in Chandigarh | MIH Interiors — 18+ Years",
   description: "MIH Interiors — Chandigarh's most trusted interior design firm since 2007. 1000+ completed projects. 3D visualization on every project. Serving Punjab, HP & Delhi.",
   keywords: ["interior designer chandigarh", "home interior design chandigarh", "best interior designer chandigarh"],
+  icons: {
+    icon: '/mih_interiors_mark.svg',
+    shortcut: '/mih_interiors_mark.svg',
+    apple: '/mih_interiors_mark.svg',
+  },
 };
 
 export default function RootLayout({

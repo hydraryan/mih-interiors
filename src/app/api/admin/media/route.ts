@@ -43,7 +43,15 @@ function buildQuery(params: URLSearchParams) {
   }
 
   if (placement && placement !== 'all') {
-    query.placements = { $in: [placement] }
+    const synonyms: Record<string, string[]> = {
+      Homepage: ['Homepage', 'home', 'hero'],
+      Projects: ['Projects', 'projects'],
+      Services: ['Services', 'services'],
+      Gallery: ['Gallery', 'gallery'],
+      'About page': ['About page', 'about'],
+    }
+    const searchValues = synonyms[placement] || [placement]
+    query.placements = { $in: searchValues }
   }
 
   return query

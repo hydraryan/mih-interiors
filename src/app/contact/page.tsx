@@ -102,7 +102,7 @@ export default function ContactPage() {
                     <ContactInfoItem 
                       icon={MapPin} 
                       label="Design Studio" 
-                      value="SCO 12, Phase 11, Mohali, Chandigarh" 
+                      value="MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017" 
                       href="https://maps.app.goo.gl/nh54NTND4Jgn8wRG6" 
                     />
                     <ContactInfoItem 

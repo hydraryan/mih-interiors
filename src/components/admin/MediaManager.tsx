@@ -302,15 +302,16 @@ export default function MediaManager() {
       setAssets(body.assets)
       setSummary(body.summary ?? { total: body.assets.length, bySource: {}, byFolder: {} })
 
-      if (!selectedId && body.assets[0]) {
-        setSelectedId(body.assets[0]._id || null)
+      // Only set initial selection if nothing is selected yet
+      if (body.assets.length > 0) {
+        setSelectedId((current) => current || body.assets![0]._id || null)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to load photos.')
     } finally {
       setLoading(false)
     }
-  }, [category, search, selectedId, statusFilter, placement])
+  }, [category, search, statusFilter, placement])
 
   useEffect(() => {
     void loadAssets()

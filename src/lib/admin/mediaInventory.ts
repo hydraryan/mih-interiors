@@ -32,7 +32,7 @@ const TITLE_OVERRIDES: Record<string, string> = {
 const folderMeta = (folder: string, fileName: string) => {
   if (folder.includes('residential')) {
     return {
-      placements: ['home', 'projects', 'gallery'],
+      placements: ['Homepage', 'Projects', 'Gallery'],
       minWidth: 1600,
       minHeight: 1200,
       aspectRatio: '4:3',
@@ -42,7 +42,7 @@ const folderMeta = (folder: string, fileName: string) => {
 
   if (folder.includes('commercial')) {
     return {
-      placements: ['services', 'projects', 'gallery'],
+      placements: ['Services', 'Projects', 'Gallery'],
       minWidth: 1600,
       minHeight: 1000,
       aspectRatio: '16:10',
@@ -52,7 +52,7 @@ const folderMeta = (folder: string, fileName: string) => {
 
   if (fileName.includes('logo')) {
     return {
-      placements: ['brand', 'header', 'footer'],
+      placements: ['Brand', 'Header', 'Footer'],
       minWidth: 512,
       minHeight: 512,
       aspectRatio: '1:1',
@@ -62,7 +62,7 @@ const folderMeta = (folder: string, fileName: string) => {
 
   if (fileName.includes('hero')) {
     return {
-      placements: ['home', 'hero'],
+      placements: ['Homepage', 'Hero'],
       minWidth: 1920,
       minHeight: 1280,
       aspectRatio: '16:9',
@@ -72,7 +72,7 @@ const folderMeta = (folder: string, fileName: string) => {
 
   if (fileName.includes('contact')) {
     return {
-      placements: ['contact', 'about'],
+      placements: ['Contact', 'About page'],
       minWidth: 1400,
       minHeight: 900,
       aspectRatio: '3:2',
@@ -81,7 +81,7 @@ const folderMeta = (folder: string, fileName: string) => {
   }
 
   return {
-    placements: ['site'],
+    placements: ['Site'],
     minWidth: 1200,
     minHeight: 900,
     aspectRatio: '4:3',

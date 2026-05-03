@@ -77,7 +77,7 @@ export default function TermsOfServicePage() {
               </p>
               <div className="bg-white p-8 rounded-3xl border border-brown-100 shadow-sm mt-6 not-prose">
                 <p className="font-bold text-[10px] uppercase tracking-widest text-brown-600 mb-2">MIH Interiors</p>
-                <p className="text-charcoal-600 font-light mb-1">SCO 12, Phase 11, Mohali, Chandigarh</p>
+                <p className="text-charcoal-600 font-light mb-1">MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017</p>
                 <p className="text-charcoal-600 font-light">Email: miharchitect@gmail.com</p>
               </div>
 

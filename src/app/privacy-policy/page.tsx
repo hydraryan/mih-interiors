@@ -79,8 +79,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="bg-white p-8 rounded-3xl border border-brown-100 shadow-sm mt-6 not-prose">
                 <p className="font-bold text-[10px] uppercase tracking-widest text-brown-600 mb-2">MIH Interiors</p>
-                <p className="text-charcoal-600 font-light mb-1">SCO 12, Phase 11, Mohali</p>
-                <p className="text-charcoal-600 font-light mb-1">Chandigarh 160062</p>
+                <p className="text-charcoal-600 font-light mb-1">MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017</p>
                 <p className="text-charcoal-600 font-light mb-1">Email: miharchitect@gmail.com</p>
                 <p className="text-charcoal-600 font-light">Phone: +91 98885 45403</p>
               </div>

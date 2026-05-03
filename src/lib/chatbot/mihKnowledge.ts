@@ -3,7 +3,7 @@ export const MIH_KNOWLEDGE_VERSION = '2026-04-26-v1'
 export const MIH_COMPANY_PROFILE = {
   businessName: 'MIH Interiors',
   clientName: 'Mohit Mahajan',
-  officeAddress: 'SCO 62-63, 3rd Floor, Sector 17A, Chandigarh - 160017',
+  officeAddress: 'MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017',
   officePhone: '+91 98885 45403',
   established: 'circa 2007',
   brandRating: '5.0',
