@@ -5,12 +5,20 @@ import WhatsAppButton from '@/components/layout/WhatsAppButton'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Services | MIH Interiors - Luxury Design & Build Solutions',
-  description: 'Bespoke interior design services. From luxury residential transformations to high-end commercial spaces, we provide end-to-end design-build solutions in Chandigarh and across North India.',
+  title: 'Interior Design Services in Chandigarh | MIH Interiors | Residential & Commercial',
+  description: 'Premium interior design services by MIH Interiors Chandigarh. Residential interiors, commercial design, modular kitchen, 3D visualization, and construction. Serving Chandigarh, Mohali & Panchkula.',
+  alternates: { canonical: 'https://mihinteriors.in/services' },
+  keywords: [
+    'interior design services chandigarh', 'residential interior design', 'commercial interior design',
+    'modular kitchen design chandigarh', '3d interior visualization', 'home construction chandigarh',
+    'interior design packages chandigarh', 'MIH interiors services',
+  ],
   openGraph: {
-    title: 'MIH Interiors Services',
-    description: 'Expert interior design, 3D visualization, and turnkey project management. Tailored solutions for your unique lifestyle.',
-    images: ['/services-hero.png'],
+    title: 'Interior Design Services | MIH Interiors Chandigarh',
+    description: 'Complete interior design services — residential, commercial, construction & 3D visualization. Chandigarh\'s most trusted firm.',
+    url: 'https://mihinteriors.in/services',
+    type: 'website',
+    images: [{ url: '/services-hero.png', width: 1200, height: 630, alt: 'MIH Interiors Services Chandigarh' }],
   },
 }
 

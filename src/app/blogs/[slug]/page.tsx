@@ -20,21 +20,41 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params
   const post = await getPost(resolvedParams.slug)
-  if (!post) return { title: 'Post Not Found' }
+  if (!post) return { title: 'Post Not Found | MIH Interiors Blog' }
+
+  const canonicalUrl = post.seo?.canonicalUrl || `https://mihinteriors.in/blogs/${post.slug}`
+  const title = post.seo?.title || `${post.title} | MIH Interiors Blog`
+  const description = post.seo?.description || post.excerpt
 
   return {
-    title: post.seo?.title || `${post.title} | MIH Interiors Blog`,
-    description: post.seo?.description || post.excerpt,
-    keywords: post.seo?.keywords?.join(', '),
-    alternates: {
-      canonical: post.seo?.canonicalUrl || `https://mihinteriors.in/blogs/${post.slug}`,
-    },
+    title,
+    description,
+    keywords: post.seo?.keywords,
+    alternates: { canonical: canonicalUrl },
+    authors: [{ name: post.author.name }],
     openGraph: {
       title: post.seo?.title || post.title,
-      description: post.seo?.description || post.excerpt,
-      images: [post.seo?.ogImage || post.mainImage],
+      description,
       type: 'article',
+      url: canonicalUrl,
       publishedTime: post.publishedAt.toISOString(),
+      modifiedTime: post.updatedAt?.toISOString() || post.publishedAt.toISOString(),
+      authors: [post.author.name],
+      tags: post.seo?.keywords,
+      images: [
+        {
+          url: post.seo?.ogImage || post.mainImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.seo?.title || post.title,
+      description,
+      images: [post.seo?.ogImage || post.mainImage],
     },
   }
 }
@@ -47,29 +67,59 @@ export default async function BlogPostDetail({ params }: Props) {
   // JSON-LD for Search Engines
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    'headline': post.title,
-    'description': post.excerpt,
-    'image': post.mainImage,
-    'author': {
-      '@type': 'Person',
-      'name': post.author.name,
-      'jobTitle': post.author.role
-    },
-    'publisher': {
-      '@type': 'Organization',
-      'name': 'MIH Interiors',
-      'logo': {
-        '@type': 'ImageObject',
-        'url': 'https://mihinteriors.in/logo.png'
-      }
-    },
-    'datePublished': post.publishedAt.toISOString(),
-    'dateModified': post.updatedAt?.toISOString() || post.publishedAt.toISOString(),
-    'mainEntityOfPage': {
-      '@type': 'WebPage',
-      '@id': `https://mihinteriors.in/blogs/${post.slug}`
-    }
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        '@id': `https://mihinteriors.in/blogs/${post.slug}#article`,
+        headline: post.title,
+        description: post.excerpt,
+        image: {
+          '@type': 'ImageObject',
+          url: post.mainImage,
+          width: 1200,
+          height: 630,
+        },
+        author: {
+          '@type': 'Person',
+          name: post.author.name,
+          jobTitle: post.author.role,
+          worksFor: {
+            '@type': 'Organization',
+            name: 'MIH Interiors',
+            url: 'https://mihinteriors.in',
+          },
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'MIH Interiors',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://mihinteriors.in/logo.png',
+            width: 300,
+            height: 100,
+          },
+          url: 'https://mihinteriors.in',
+        },
+        datePublished: post.publishedAt.toISOString(),
+        dateModified: post.updatedAt?.toISOString() || post.publishedAt.toISOString(),
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `https://mihinteriors.in/blogs/${post.slug}`,
+        },
+        keywords: post.seo?.keywords?.join(', '),
+        articleSection: post.category,
+        inLanguage: 'en-IN',
+        url: `https://mihinteriors.in/blogs/${post.slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mihinteriors.in' },
+          { '@type': 'ListItem', position: 2, name: 'Blogs', item: 'https://mihinteriors.in/blogs' },
+          { '@type': 'ListItem', position: 3, name: post.title, item: `https://mihinteriors.in/blogs/${post.slug}` },
+        ],
+      },
+    ],
   }
 
   return (

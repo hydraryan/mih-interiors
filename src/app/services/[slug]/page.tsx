@@ -56,17 +56,60 @@ async function getVisibleService(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const service = await getVisibleService(resolvedParams.slug);
-  if (!service) return { title: "Service Not Found" };
+  const resolvedParams = await params
+  const service = await getVisibleService(resolvedParams.slug)
+  if (!service) return { title: 'Service Not Found | MIH Interiors' }
+
+  const serviceKeywordMap: Record<string, string[]> = {
+    'residential-interiors': [
+      'residential interior design chandigarh', 'home interior chandigarh', '3bhk interior design chandigarh',
+      'modular kitchen chandigarh', 'bedroom interior design chandigarh',
+    ],
+    'commercial-interiors': [
+      'commercial interior design chandigarh', 'office interior design chandigarh',
+      'retail interior design chandigarh', 'restaurant interior chandigarh',
+    ],
+    'construction-architecture': [
+      'construction company chandigarh', 'architects chandigarh', 'villa construction chandigarh',
+      'kothi construction chandigarh', 'home construction chandigarh',
+    ],
+  }
+
+  const keywords = serviceKeywordMap[resolvedParams.slug] || [
+    'interior design chandigarh', 'MIH interiors', service.title,
+  ]
+
+  const canonicalUrl = `https://mihinteriors.in/services/${resolvedParams.slug}`
+  const title = `${service.title} in Chandigarh | MIH Interiors | Best ${service.title}`
+  const description = service.seo?.description ||
+    `${service.title} by MIH Interiors Chandigarh. 18+ years experience, 1000+ projects. Expert ${service.title.toLowerCase()} services in Chandigarh, Mohali & Panchkula. Free consultation.`
 
   return {
-    title: service.seo?.title || `${service.title} | MIH Interiors`,
-    description: service.seo?.description || service.shortDescription,
+    title,
+    description,
+    keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
-      images: [service.seo?.ogImage || service.hero?.image || ""],
+      title,
+      description,
+      url: canonicalUrl,
+      type: 'website',
+      images: [
+        {
+          url: service.seo?.ogImage || service.hero?.image || '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${service.title} in Chandigarh — MIH Interiors`,
+        },
+      ],
     },
-  };
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [service.seo?.ogImage || service.hero?.image || '/og-image.jpg'],
+    },
+  }
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
@@ -86,7 +129,46 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#fbf4eb] text-charcoal-900 font-body selection:bg-brown-200 overflow-x-hidden">
-      
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: service.title,
+            description: service.shortDescription,
+            provider: {
+              '@type': 'InteriorDesigner',
+              name: 'MIH Interiors',
+              url: 'https://mihinteriors.in',
+              telephone: '+91-98885-45403',
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A',
+                addressLocality: 'Chandigarh',
+                postalCode: '160017',
+                addressCountry: 'IN',
+              },
+            },
+            areaServed: ['Chandigarh', 'Mohali', 'Panchkula', 'Punjab'],
+            url: `https://mihinteriors.in/services/${service.slug}`,
+            image: service.hero?.image,
+            ...(service.faqs && service.faqs.length > 0 ? {
+              mainEntity: {
+                '@type': 'FAQPage',
+                mainEntity: service.faqs.map((faq: { question: string; answer: string }) => ({
+                  '@type': 'Question',
+                  name: faq.question,
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: faq.answer,
+                  },
+                })),
+              },
+            } : {}),
+          }),
+        }}
+      />
       {/* CHAPTER 1: THE DOMAIN (Hero) */}
       <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white pt-24 md:pt-32">
         <div className="absolute inset-0 z-0">

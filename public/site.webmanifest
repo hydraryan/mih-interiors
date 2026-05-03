@@ -1,0 +1,27 @@
+{
+  "name": "MIH Interiors",
+  "short_name": "MIH Interiors",
+  "description": "Best Interior Designer in Chandigarh | MIH Interiors",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F4",
+  "theme_color": "#3D1F0D",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/mih_interiors_mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/hero_image.jpg",
+      "sizes": "1920x1080",
+      "type": "image/jpeg",
+      "label": "MIH Interiors Homepage"
+    }
+  ]
+}
