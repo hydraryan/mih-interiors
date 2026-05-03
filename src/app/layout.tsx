@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -121,140 +122,159 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html
+    <html
       lang="en"
       suppressHydrationWarning
       className={`${jakarta.variable} ${outfit.variable} h-full antialiased smooth-scroll`}
     >
+      <head>
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WJCLQ6XN');`}
+        </Script>
+      </head>
       <body className="min-h-full flex flex-col">
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'InteriorDesigner',
-          '@id': 'https://mihinteriors.in/#business',
-          name: 'MIH Interiors',
-          alternateName: ['MIH', 'MIH Architects and Interiors', 'MIH Interiors Chandigarh'],
-          url: 'https://mihinteriors.in',
-          logo: {
-            '@type': 'ImageObject',
-            url: 'https://mihinteriors.in/logo.png',
-            width: 300,
-            height: 100,
-          },
-          image: 'https://mihinteriors.in/hero_image.jpg',
-          description: 'MIH Interiors is Chandigarh\'s most trusted interior design firm with 18+ years of experience, 1000+ completed projects across Chandigarh, Mohali, and Panchkula.',
-          telephone: '+91-98885-45403',
-          email: 'miharchitect@gmail.com',
-          foundingDate: '2007',
-          numberOfEmployees: { '@type': 'QuantitativeValue', value: 15 },
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A, Near Oyster Hotel',
-            addressLocality: 'Chandigarh',
-            addressRegion: 'Chandigarh',
-            postalCode: '160017',
-            addressCountry: 'IN',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: 30.7333,
-            longitude: 76.7794,
-          },
-          areaServed: [
-            { '@type': 'City', name: 'Chandigarh' },
-            { '@type': 'City', name: 'Mohali' },
-            { '@type': 'City', name: 'Panchkula' },
-            { '@type': 'City', name: 'Zirakpur' },
-            { '@type': 'State', name: 'Punjab' },
-          ],
-          openingHoursSpecification: [
-            {
-              '@type': 'OpeningHoursSpecification',
-              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-              opens: '10:00',
-              closes: '19:00',
-            },
-          ],
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: '5.0',
-            reviewCount: '85',
-            bestRating: '5',
-            worstRating: '1',
-          },
-          priceRange: '₹₹₹',
-          currenciesAccepted: 'INR',
-          paymentAccepted: 'Cash, Bank Transfer, Cheque',
-          hasMap: 'https://maps.app.goo.gl/nh54NTND4Jgn8wRG6',
-          sameAs: [
-            'https://www.instagram.com/mihinteriors/',
-            'https://www.facebook.com/profile.php?id=100088721091794',
-            'https://www.justdial.com/Chandigarh/Mih-Architects-and-Interiors-Main-Market-Chandigarh-Sector-17a/0172PX172-X172-241024174522-K6P7_BZDET',
-          ],
-          founder: {
-            '@type': 'Person',
-            name: 'Mohit Mahajan',
-            jobTitle: 'Founder & Principal Architect',
-            worksFor: { '@id': 'https://mihinteriors.in/#business' },
-          },
-          knowsAbout: [
-            'Residential Interior Design',
-            'Commercial Interior Design',
-            'Modular Kitchen Design',
-            'False Ceiling Design',
-            'Modular Wardrobes',
-            '3D Visualization',
-            'Home Renovation',
-            'Office Interior Design',
-            'Construction and Architecture',
-          ],
-          serviceArea: {
-            '@type': 'GeoCircle',
-            geoMidpoint: {
-              '@type': 'GeoCoordinates',
-              latitude: 30.7333,
-              longitude: 76.7794,
-            },
-            geoRadius: '50000',
-          },
-        },
-        {
-          '@type': 'WebSite',
-          '@id': 'https://mihinteriors.in/#website',
-          url: 'https://mihinteriors.in',
-          name: 'MIH Interiors',
-          description: 'Best Interior Designer in Chandigarh',
-          publisher: { '@id': 'https://mihinteriors.in/#business' },
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: 'https://mihinteriors.in/blogs?search={search_term_string}',
-            },
-            'query-input': 'required name=search_term_string',
-          },
-          inLanguage: 'en-IN',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://mihinteriors.in/#breadcrumb',
-          itemListElement: [
-            {
-              '@type': 'ListItem',
-              position: 1,
-              name: 'Home',
-              item: 'https://mihinteriors.in',
-            },
-          ],
-        },
-      ],
-    }),
-  }}
-/>{children}</body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WJCLQ6XN"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'InteriorDesigner',
+                  '@id': 'https://mihinteriors.in/#business',
+                  name: 'MIH Interiors',
+                  alternateName: ['MIH', 'MIH Architects and Interiors', 'MIH Interiors Chandigarh'],
+                  url: 'https://mihinteriors.in',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://mihinteriors.in/logo.png',
+                    width: 300,
+                    height: 100,
+                  },
+                  image: 'https://mihinteriors.in/hero_image.jpg',
+                  description: 'MIH Interiors is Chandigarh\'s most trusted interior design firm with 18+ years of experience, 1000+ completed projects across Chandigarh, Mohali, and Panchkula.',
+                  telephone: '+91-98885-45403',
+                  email: 'miharchitect@gmail.com',
+                  foundingDate: '2007',
+                  numberOfEmployees: { '@type': 'QuantitativeValue', value: 15 },
+                  address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A, Near Oyster Hotel',
+                    addressLocality: 'Chandigarh',
+                    addressRegion: 'Chandigarh',
+                    postalCode: '160017',
+                    addressCountry: 'IN',
+                  },
+                  geo: {
+                    '@type': 'GeoCoordinates',
+                    latitude: 30.7333,
+                    longitude: 76.7794,
+                  },
+                  areaServed: [
+                    { '@type': 'City', name: 'Chandigarh' },
+                    { '@type': 'City', name: 'Mohali' },
+                    { '@type': 'City', name: 'Panchkula' },
+                    { '@type': 'City', name: 'Zirakpur' },
+                    { '@type': 'State', name: 'Punjab' },
+                  ],
+                  openingHoursSpecification: [
+                    {
+                      '@type': 'OpeningHoursSpecification',
+                      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                      opens: '10:00',
+                      closes: '19:00',
+                    },
+                  ],
+                  aggregateRating: {
+                    '@type': 'AggregateRating',
+                    ratingValue: '5.0',
+                    reviewCount: '85',
+                    bestRating: '5',
+                    worstRating: '1',
+                  },
+                  priceRange: '₹₹₹',
+                  currenciesAccepted: 'INR',
+                  paymentAccepted: 'Cash, Bank Transfer, Cheque',
+                  hasMap: 'https://maps.app.goo.gl/nh54NTND4Jgn8wRG6',
+                  sameAs: [
+                    'https://www.instagram.com/mihinteriors/',
+                    'https://www.facebook.com/profile.php?id=100088721091794',
+                    'https://www.justdial.com/Chandigarh/Mih-Architects-and-Interiors-Main-Market-Chandigarh-Sector-17a/0172PX172-X172-241024174522-K6P7_BZDET',
+                  ],
+                  founder: {
+                    '@type': 'Person',
+                    name: 'Mohit Mahajan',
+                    jobTitle: 'Founder & Principal Architect',
+                    worksFor: { '@id': 'https://mihinteriors.in/#business' },
+                  },
+                  knowsAbout: [
+                    'Residential Interior Design',
+                    'Commercial Interior Design',
+                    'Modular Kitchen Design',
+                    'False Ceiling Design',
+                    'Modular Wardrobes',
+                    '3D Visualization',
+                    'Home Renovation',
+                    'Office Interior Design',
+                    'Construction and Architecture',
+                  ],
+                  serviceArea: {
+                    '@type': 'GeoCircle',
+                    geoMidpoint: {
+                      '@type': 'GeoCoordinates',
+                      latitude: 30.7333,
+                      longitude: 76.7794,
+                    },
+                    geoRadius: '50000',
+                  },
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://mihinteriors.in/#website',
+                  url: 'https://mihinteriors.in',
+                  name: 'MIH Interiors',
+                  description: 'Best Interior Designer in Chandigarh',
+                  publisher: { '@id': 'https://mihinteriors.in/#business' },
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: {
+                      '@type': 'EntryPoint',
+                      urlTemplate: 'https://mihinteriors.in/blogs?search={search_term_string}',
+                    },
+                    'query-input': 'required name=search_term_string',
+                  },
+                  inLanguage: 'en-IN',
+                },
+                {
+                  '@type': 'BreadcrumbList',
+                  '@id': 'https://mihinteriors.in/#breadcrumb',
+                  itemListElement: [
+                    {
+                      '@type': 'ListItem',
+                      position: 1,
+                      name: 'Home',
+                      item: 'https://mihinteriors.in',
+                    },
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
