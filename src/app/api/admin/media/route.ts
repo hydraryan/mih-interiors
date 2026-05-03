@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import MediaAsset from '@/lib/models/MediaAsset'
 import { syncWebsiteMediaAssets } from '@/lib/media'
@@ -102,12 +103,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const asset = body._id
-      ? await MediaAsset.findByIdAndUpdate(body._id, body, { new: true, runValidators: true })
+      ? await MediaAsset.findByIdAndUpdate(body._id, body, { returnDocument: 'after', runValidators: true })
       : await MediaAsset.findOneAndUpdate(
           { sourceKey: body.sourceKey },
           body,
-          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+          { returnDocument: 'after', upsert: true, runValidators: true, setDefaultsOnInsert: true },
         )
+
+    revalidatePath('/', 'layout')
 
     return NextResponse.json({ success: true, asset })
   } catch (error: unknown) {

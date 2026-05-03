@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import dbConnect from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
 import { getActiveMediaMap } from '@/lib/media';
@@ -46,6 +47,8 @@ export async function POST(request: Request) {
     await dbConnect();
     const body = await request.json();
     const project = await Project.create(body);
+    revalidatePath('/', 'layout');
+    revalidatePath('/projects');
     return NextResponse.json(project, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });

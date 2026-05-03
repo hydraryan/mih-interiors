@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import dbConnect from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
 
@@ -32,8 +33,14 @@ export async function PUT(
     const project = await Project.findOneAndUpdate(
       { slug: resolvedParams.slug },
       body,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
+
+    if (project) {
+      revalidatePath('/', 'layout');
+      revalidatePath('/projects');
+      revalidatePath(`/projects/${resolvedParams.slug}`);
+    }
 
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -57,6 +64,9 @@ export async function DELETE(
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
+
+    revalidatePath('/', 'layout');
+    revalidatePath('/projects');
 
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {

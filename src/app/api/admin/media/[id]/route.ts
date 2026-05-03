@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import MediaAsset from '@/lib/models/MediaAsset'
 
@@ -19,12 +20,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     await dbConnect()
     const { id } = await params
     const body = await request.json()
-    const asset = await MediaAsset.findByIdAndUpdate(id, body, { new: true, runValidators: true })
+    const asset = await MediaAsset.findByIdAndUpdate(id, body, { returnDocument: 'after', runValidators: true })
 
     if (!asset) {
       return NextResponse.json({ success: false, error: 'Media asset not found' }, { status: 404 })
     }
 
+    revalidatePath('/', 'layout')
     return NextResponse.json({ success: true, asset })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to update media asset.'
@@ -45,6 +47,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ success: false, error: 'Media asset not found' }, { status: 404 })
     }
 
+    revalidatePath('/', 'layout')
     return NextResponse.json({ success: true })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to delete media asset.'
