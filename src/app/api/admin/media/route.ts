@@ -49,9 +49,11 @@ function buildQuery(params: URLSearchParams) {
       Services: ['Services', 'services'],
       Gallery: ['Gallery', 'gallery'],
       'About page': ['About page', 'about'],
+      Blogs: ['Blogs', 'blogs'],
     }
     const searchValues = synonyms[placement] || [placement]
-    query.placements = { $in: searchValues }
+    // Map values to case-insensitive regex to catch 'homepage', 'Homepage', etc.
+    query.placements = { $in: searchValues.map((v) => new RegExp(`^${v}$`, 'i')) }
   }
 
   return query

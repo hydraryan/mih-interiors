@@ -259,7 +259,7 @@ export default function MediaManager() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('all')
+  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
   const [placement, setPlacement] = useState('all')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -288,7 +288,6 @@ export default function MediaManager() {
     try {
       const params = new URLSearchParams()
       if (search) params.set('search', search)
-      if (category !== 'all') params.set('category', category)
       if (statusFilter !== 'all') params.set('status', statusFilter)
       if (placement !== 'all') params.set('placement', placement)
 
@@ -311,7 +310,7 @@ export default function MediaManager() {
     } finally {
       setLoading(false)
     }
-  }, [category, search, statusFilter, placement])
+  }, [search, statusFilter, placement])
 
   useEffect(() => {
     void loadAssets()
@@ -605,23 +604,6 @@ export default function MediaManager() {
                   </button>
                 ))}
               </div>
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {FOLDER_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setCategory(option.value)}
-                  className={`shrink-0 rounded-md px-3 py-2 text-xs font-semibold transition ${
-                    category === option.value
-                      ? 'bg-[#f0dfc8] text-brown-900'
-                      : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
             </div>
           </div>
 
