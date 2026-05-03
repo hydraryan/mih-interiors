@@ -17,12 +17,6 @@ const FALLBACK_SERVICES = [
     image: "/services-commercial.jpg",
   },
   {
-    title: "3D Visualization",
-    description: "Hyper-realistic 3D renders that eliminate surprises before we lay the first brick.",
-    link: "/services/3d-visualization",
-    image: "/services-3d.jpg",
-  },
-  {
     title: "Home Construction",
     description: "Complete architecture and construction services starting at just Rs. 1,250/sq.ft.",
     link: "/services/construction-architecture",
