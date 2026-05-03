@@ -259,7 +259,6 @@ export default function MediaManager() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
   const [placement, setPlacement] = useState('all')
   const [selectedId, setSelectedId] = useState<string | null>(null)
