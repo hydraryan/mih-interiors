@@ -37,12 +37,22 @@ export default function AdminLoginForm() {
         callbackUrl,
       })
 
-      if (result?.error) {
+      // Debugging aid: log the result so we can inspect `ok`, `error`, and `url`.
+      // This helps diagnose silent failures where the token/cookie isn't set.
+      // eslint-disable-next-line no-console
+      console.log('signIn result:', result)
+
+      if (!result || result.error) {
         setError('Invalid admin ID or password.')
         return
       }
 
-      router.replace(result?.url || callbackUrl)
+      if (result.ok === false) {
+        setError('Unable to sign in. Please try again.')
+        return
+      }
+
+      router.replace(result.url || callbackUrl)
       router.refresh()
     } catch {
       setError('Unable to sign in right now. Please try again.')

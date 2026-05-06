@@ -47,14 +47,23 @@ export default async function middleware(request: NextRequest) {
     PROTECTED_METHODS.has(method) && PROTECTED_MUTATION_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 
   if (requiresAuth) {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+    let token = null
+    try {
+      token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+    } catch (err: any) {
+      console.error('Middleware getToken error:', err?.message || err)
+      token = null
+    }
 
     if (!token) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
       }
 
-      const loginUrl = new URL(`https://${MAIN_DOMAIN}/admin/login`, request.url)
+      // Redirect to the same origin as the incoming request so cookies and callback URLs
+      // remain consistent in development and production environments.
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/admin/login'
       loginUrl.searchParams.set('callbackUrl', `${pathname}${request.nextUrl.search}`)
       return NextResponse.redirect(loginUrl)
     }

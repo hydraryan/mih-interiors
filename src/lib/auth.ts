@@ -49,4 +49,25 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV !== 'production',
+  callbacks: {
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // Log token lifecycle for debugging authentication flow on the server
+      // eslint-disable-next-line no-console
+      console.log('NextAuth jwt callback:', { token: { ...token }, user: !!user, account: !!account, isNewUser })
+      if (user) {
+        token.user = user
+      }
+      return token
+    },
+    async session({ session, token }) {
+      // Attach token info to session for server-side checks and logging
+      // eslint-disable-next-line no-console
+      console.log('NextAuth session callback:', { session: !!session, token: !!token })
+      if (token?.user) {
+        session.user = token.user as any
+      }
+      return session
+    },
+  },
 }
