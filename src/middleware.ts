@@ -38,7 +38,10 @@ export default async function middleware(request: NextRequest) {
   if (requiresAuth) {
     let token = null
     try {
-      token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+      // Bulletproof token extraction: Check both secure and insecure prefixed cookies
+      // Vercel Edge middleware sometimes disagrees with Node API routes on whether a request is secure.
+      token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, secureCookie: true })
+           || await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, secureCookie: false })
     } catch (err: any) {
       console.error('Middleware getToken error:', err?.message || err)
       token = null
