@@ -6,7 +6,9 @@ import MediaAsset from '@/lib/models/MediaAsset'
 import { syncWebsiteMediaAssets } from '@/lib/media'
 
 async function ensureAdmin(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const token =
+    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: true })) ||
+    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: false }))
   if (!token) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }

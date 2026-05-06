@@ -3,7 +3,9 @@ import { getToken } from 'next-auth/jwt'
 import { buildAdminAnalytics } from '@/lib/admin/analytics'
 
 async function ensureAdmin(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const token =
+    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: true })) ||
+    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: false }))
   if (!token) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
