@@ -16,35 +16,24 @@ export default async function middleware(request: NextRequest) {
 
   const isApiPath = pathname.startsWith('/api/')
 
-  // 1. STRICT DOMAIN CONSOLIDATION (NO REWRITES)
-  // We strictly redirect all subdomains (admin, services, etc.) to their native paths on the main domain.
-  if (hostname.includes('admin.') || hostname.includes('services.') || hostname.includes('projects.') || hostname.includes('blogs.')) {
-    let targetPath = pathname
-    
-    // IMPORTANT FIX: Do NOT prepend /admin to API routes. They must remain /api/...
-    if (hostname.startsWith('admin.') && !pathname.startsWith('/admin') && !isApiPath) {
-      targetPath = `/admin${pathname === '/' ? '' : pathname}`
-    }
-    
-    if (hostname.startsWith('services.') && !pathname.startsWith('/services') && !isApiPath) {
-      targetPath = `/services${pathname === '/' ? '' : pathname}`
-    }
-    if (hostname.startsWith('projects.') && !pathname.startsWith('/projects') && !isApiPath) {
-      targetPath = `/projects${pathname === '/' ? '' : pathname}`
-    }
-    if (hostname.startsWith('blogs.') && !pathname.startsWith('/blogs') && !isApiPath) {
-      targetPath = `/blogs${pathname === '/' ? '' : pathname}`
-    }
-    
-    // Preserve search params (like callbackUrl) during redirect
-    return NextResponse.redirect(new URL(`https://${MAIN_DOMAIN}${targetPath}${request.nextUrl.search}`, request.url))
+  // Determine effective target path for rewrites
+  let effectivePath = pathname
+  
+  if (hostname.startsWith('admin.') && !pathname.startsWith('/admin') && !isApiPath) {
+    effectivePath = `/admin${pathname === '/' ? '' : pathname}`
+  } else if (hostname.startsWith('services.') && !pathname.startsWith('/services') && !isApiPath) {
+    effectivePath = `/services${pathname === '/' ? '' : pathname}`
+  } else if (hostname.startsWith('projects.') && !pathname.startsWith('/projects') && !isApiPath) {
+    effectivePath = `/projects${pathname === '/' ? '' : pathname}`
+  } else if (hostname.startsWith('blogs.') && !pathname.startsWith('/blogs') && !isApiPath) {
+    effectivePath = `/blogs${pathname === '/' ? '' : pathname}`
   }
 
   // 2. AUTHENTICATION PROTECTION
   const requiresAuth =
-    (!PUBLIC_ADMIN_PATHS.has(pathname) && pathname.startsWith('/admin')) ||
-    PROTECTED_API_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)) ||
-    PROTECTED_METHODS.has(method) && PROTECTED_MUTATION_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+    (!PUBLIC_ADMIN_PATHS.has(effectivePath) && effectivePath.startsWith('/admin')) ||
+    PROTECTED_API_PREFIXES.some((prefix) => effectivePath === prefix || effectivePath.startsWith(`${prefix}/`)) ||
+    (PROTECTED_METHODS.has(method) && PROTECTED_MUTATION_PREFIXES.some((prefix) => effectivePath === prefix || effectivePath.startsWith(`${prefix}/`)))
 
   if (requiresAuth) {
     let token = null
@@ -60,13 +49,19 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
       }
 
-      // Redirect to the same origin as the incoming request so cookies and callback URLs
-      // remain consistent in development and production environments.
+      // Redirect to login using the appropriate path for the current domain
       const loginUrl = request.nextUrl.clone()
-      loginUrl.pathname = '/admin/login'
-      loginUrl.searchParams.set('callbackUrl', `${pathname}${request.nextUrl.search}`)
+      loginUrl.pathname = hostname.startsWith('admin.') ? '/login' : '/admin/login'
+      loginUrl.searchParams.set('callbackUrl', `${request.nextUrl.pathname}${request.nextUrl.search}`)
       return NextResponse.redirect(loginUrl)
     }
+  }
+
+  // Rewrite if the effective path is different from the requested path (for subdomains)
+  if (effectivePath !== pathname) {
+    const rewriteUrl = request.nextUrl.clone()
+    rewriteUrl.pathname = effectivePath
+    return NextResponse.rewrite(rewriteUrl)
   }
 
   return NextResponse.next()

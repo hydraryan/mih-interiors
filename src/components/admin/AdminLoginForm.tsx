@@ -13,10 +13,11 @@ export default function AdminLoginForm() {
   const requestedCallbackUrl = searchParams.get('callbackUrl')
   const callbackUrl =
     requestedCallbackUrl &&
-    requestedCallbackUrl.startsWith('/admin') &&
+    requestedCallbackUrl.startsWith('/') &&
+    !requestedCallbackUrl.startsWith('/api/') &&
     !requestedCallbackUrl.startsWith('/admin/api/')
       ? requestedCallbackUrl
-      : '/admin'
+      : '/'
 
   const [adminId, setAdminId] = useState('')
   const [password, setPassword] = useState('')
