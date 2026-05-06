@@ -219,7 +219,11 @@ function ChatbotContent() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const frame = window.requestAnimationFrame(() => {
+      setMounted(true)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
   }, [])
 
   const currentStepId = STEP_IDS[stepIndex]

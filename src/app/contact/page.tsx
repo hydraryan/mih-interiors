@@ -2,10 +2,9 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import ScrollReveal from '@/components/ui/ScrollReveal'
-import { Phone, Mail, MapPin, MessageSquare, ArrowRight, Send, Facebook } from 'lucide-react'
-import { InstagramLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
+import { Phone, Mail, MapPin, MessageSquare, Send } from 'lucide-react'
+import { InstagramLogoIcon } from '@radix-ui/react-icons'
 
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -47,7 +46,7 @@ export default function ContactPage() {
       } else {
         setStatus('error')
       }
-    } catch (err) {
+    } catch {
       setStatus('error')
     }
   }
@@ -59,7 +58,7 @@ export default function ContactPage() {
       <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-white/40 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
           <Image 
             src="/contact-hero.png"
             alt="Minimalist Sanctuary"
@@ -73,7 +72,7 @@ export default function ContactPage() {
         <div className="relative z-30 text-center px-6">
           <ScrollReveal>
             <h1 className="font-display text-7xl md:text-[11rem] leading-[0.8] tracking-tighter text-charcoal-900">
-              Let's <br />
+              Let&apos;s <br />
               <span className="italic text-brown-600">Manifest.</span>
             </h1>
             <p className="mt-12 mx-auto max-w-xl text-lg md:text-2xl text-charcoal-500 font-light leading-relaxed">
@@ -252,7 +251,17 @@ export default function ContactPage() {
   )
 }
 
-function ContactInfoItem({ icon: Icon, label, value, href }: { icon: any, label: string, value: string, href: string }) {
+function ContactInfoItem({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  value: string
+  href: string
+}) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="group block space-y-4">
       <div className="flex items-center gap-3">
