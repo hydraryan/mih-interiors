@@ -28,7 +28,8 @@ export default function Floating3DButton() {
   }, [])
 
   // Don't show the button if we are already on the 3d-rendering page or in the admin portal
-  if (pathname === '/3d-rendering' || pathname?.startsWith('/admin')) return null
+  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')
+  if (pathname === '/3d-rendering' || pathname?.startsWith('/admin') || isAdminHost) return null
 
   return (
     <div 
