@@ -3,6 +3,7 @@ import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import Floating3DButton from "@/components/layout/Floating3DButton";
+import NextTopLoader from 'nextjs-toploader';
 import "./globals.css";
 
 const outfit = Outfit({
@@ -153,6 +154,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full flex flex-col">
+        <NextTopLoader color="#A47C54" showSpinner={false} height={3} />
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-WJCLQ6XN"
