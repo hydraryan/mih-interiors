@@ -17,7 +17,7 @@ export default function HeroSection({ imageSrc = '/hero_image.jpg' }: { imageSrc
   return (
     <section 
       ref={containerRef}
-      className="relative h-screen min-h-200 overflow-hidden bg-cream-50 flex flex-col justify-center items-center"
+      className="relative min-h-screen overflow-hidden bg-cream-50 flex flex-col justify-center items-center"
     >
       {/* ── Background Image with Parallax ── */}
       <motion.div 

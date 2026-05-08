@@ -257,7 +257,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         }}
       />
       {/* CHAPTER 1: THE DOMAIN (Hero) */}
-      <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white pt-24 md:pt-32">
+      <section className="relative min-h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white pt-24 pb-24 md:pt-32 md:pb-32">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-white/20 z-10" />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
