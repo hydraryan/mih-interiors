@@ -548,12 +548,17 @@ function ChatbotContent() {
 
     setLastPricingDecision(estimate.pricingDecision)
 
+    if (estimate.pricingDecision) {
+      nextAnswers.budget_range = formatLakhRange(
+        estimate.pricingDecision.personalizedMinLakh, 
+        estimate.pricingDecision.personalizedMaxLakh
+      )
+    }
+
     logChatEvent('estimate_generated', {
       stepId: 'contact',
       payload: {
-        rangeText: estimate.pricingDecision
-          ? formatLakhRange(estimate.pricingDecision.personalizedMinLakh, estimate.pricingDecision.personalizedMaxLakh)
-          : null,
+        rangeText: nextAnswers.budget_range || null,
       },
     })
 
