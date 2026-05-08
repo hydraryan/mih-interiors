@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       })
 
       // Send email notification (async)
-      void sendLeadNotification(lead)
+      await sendLeadNotification(lead)
 
       if (body.conversationId) {
         await ChatbotEvent.create({

@@ -24,8 +24,8 @@ export async function POST(request: Request) {
       status: 'new'
     })
 
-    // Send email notification (fire-and-forget)
-    void sendNotification('3d_rendering', {
+    // Send email notification (async)
+    await sendNotification('3d_rendering', {
       name,
       phone,
       city,

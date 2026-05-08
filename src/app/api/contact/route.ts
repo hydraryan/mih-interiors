@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date(),
     })
     
-    // Send email notification (fire-and-forget)
-    void sendNotification('contact_form', {
+    // Send email notification (async)
+    await sendNotification('contact_form', {
       name,
       email,
       phone,
