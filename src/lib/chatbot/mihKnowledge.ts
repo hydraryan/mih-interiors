@@ -4,7 +4,7 @@ export const MIH_COMPANY_PROFILE = {
   businessName: 'MIH Interiors',
   clientName: 'Mohit Mahajan',
   officeAddress: 'MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017',
-  officePhone: '+91 98885 45403',
+  officePhone: '+91 6399936333',
   established: 'circa 2007',
   brandRating: '5.0',
   operatingRegions: ['Chandigarh', 'Mohali', 'Panchkula', 'Punjab', 'Pathankot'],

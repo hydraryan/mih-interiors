@@ -130,12 +130,13 @@ function getPrefillState(args: {
   serviceSlug: string | null
   hasQuoteHash: boolean
 }): PrefillState {
-  const pathServiceSlug = args.pathname.startsWith('/services/') ? args.pathname.split('/services/')[1] : null
-  const slug = args.serviceSlug || pathServiceSlug
-
-  if (!args.hasQuoteHash && !slug) {
+  // Only auto-open if the user clicked the deep-link with #quote hash
+  if (!args.hasQuoteHash) {
     return { isOpen: false, stepIndex: 0, answers: {} }
   }
+
+  const pathServiceSlug = args.pathname.startsWith('/services/') ? args.pathname.split('/services/')[1] : null
+  const slug = args.serviceSlug || pathServiceSlug
 
   if (slug === 'residential-interiors') {
     return {
@@ -143,6 +144,7 @@ function getPrefillState(args: {
       stepIndex: 1,
       answers: {
         greeting: 'residential',
+        scope: 'interiors',
       },
     }
   }
@@ -153,6 +155,7 @@ function getPrefillState(args: {
       stepIndex: 1,
       answers: {
         greeting: 'commercial',
+        scope: 'interiors',
       },
     }
   }
@@ -160,10 +163,21 @@ function getPrefillState(args: {
   if (slug === 'construction-architecture') {
     return {
       isOpen: true,
-      stepIndex: 2,
+      stepIndex: 1,
       answers: {
         greeting: 'residential',
         scope: 'full',
+      },
+    }
+  }
+
+  if (slug === 'architecture') {
+    return {
+      isOpen: true,
+      stepIndex: 1,
+      answers: {
+        greeting: 'residential',
+        scope: 'design_only',
       },
     }
   }
@@ -364,18 +378,24 @@ function ChatbotContent() {
     if (typeof window === 'undefined') return
     if (window.location.hash !== '#quote') return
 
-    history.replaceState(null, '', window.location.pathname + window.location.search)
+    // Get fresh values directly from window to avoid stale closure issues from hooks
+    const currentPathname = window.location.pathname
+    const currentSearchParams = new URLSearchParams(window.location.search)
+    const freshServiceSlug = currentSearchParams.get('service')
+
+    // Clear the hash without triggering another hashchange
+    history.replaceState(null, '', currentPathname + window.location.search)
 
     const prefill = getPrefillState({
-      pathname,
-      serviceSlug,
+      pathname: currentPathname,
+      serviceSlug: freshServiceSlug,
       hasQuoteHash: true,
     })
 
     setIsOpen(true)
     setStepIndex(prefill.stepIndex)
     setAnswers(prefill.answers)
-  }, [pathname, serviceSlug])
+  }, []) // Removed pathname, serviceSlug dependencies to keep handler stable
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -809,7 +829,7 @@ function ChatbotContent() {
       {mounted && !isOpen ? (
         <motion.button
           onClick={openChat}
-          className="fixed bottom-22 right-5 z-40 inline-flex h-12 items-center gap-3 rounded-full border border-white/15 bg-charcoal-900 px-3.5 pr-5 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(20,16,13,0.28)] transition hover:-translate-y-0.5 hover:bg-brown-900 hover:shadow-[0_20px_48px_rgba(20,16,13,0.34)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-charcoal-900"
+          className="fixed bottom-36 right-5 z-40 inline-flex h-12 items-center gap-3 rounded-full border border-white/15 bg-charcoal-900 px-3.5 pr-5 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(20,16,13,0.28)] transition hover:-translate-y-0.5 hover:bg-brown-900 hover:shadow-[0_20px_48px_rgba(20,16,13,0.34)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-charcoal-900"
           initial={false}
           animate={{ scale: 1, opacity: 1 }}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}

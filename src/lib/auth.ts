@@ -47,6 +47,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 2 * 60 * 60, // 2 hours for enhanced security
   },
   cookies: {
     sessionToken: {
@@ -56,12 +57,11 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? '.mihinteriors.in' : 'localhost',
+        domain: process.env.NODE_ENV === 'production' ? '.mihinteriors.in' : undefined,
       }
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
   debug: process.env.NODE_ENV !== 'production',
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {

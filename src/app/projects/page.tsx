@@ -45,43 +45,126 @@ export default function ProjectsPage() {
     setIsModalOpen(true)
   }
 
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0)
+
+  // Auto-cycle the hero projects
+  useEffect(() => {
+    if (projects.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentHeroIndex(prev => (prev + 1) % Math.min(projects.length, 5)); // Cycle through top 5
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [projects]);
+
   return (
     <div className="min-h-screen bg-[#fbf4eb] text-charcoal-900 font-body selection:bg-brown-200 overflow-x-hidden">
       
-      {/* CHAPTER 1: THE MASTERPIECE (Hero) */}
-      <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white pt-24 md:pt-32">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-white/40 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
-          <Image 
-            src="/projects-hero.png"
-            alt="Modern Legacies"
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        </div>
+      {/* CHAPTER 1: THE MASTERPIECE (Hero Carousel) */}
+      <section className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-charcoal-900">
+        <AnimatePresence mode="wait">
+          {projects.length > 0 && (
+            <motion.div
+              key={currentHeroIndex}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="absolute inset-0 z-0"
+            >
+              <Image 
+                src={getDirectImageUrl(projects[currentHeroIndex].mainImage) || '/projects-hero.png'}
+                alt={projects[currentHeroIndex].title}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-charcoal-900/40 z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900 via-charcoal-900/20 to-transparent z-20" />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        <div className="relative z-30 text-center px-6">
-          <ScrollReveal>
-            <div className="flex flex-col items-center">
-              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-charcoal-900/10 bg-white/50 px-6 py-2.5 backdrop-blur-md">
-                <Sparkles className="h-3.5 w-3.5 text-brown-600" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-charcoal-700">The Portfolio Collection</span>
+        {/* White gradient at top for header visibility */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-white/90 via-white/40 to-transparent z-20 pointer-events-none" />
+
+        <div className="relative z-30 w-full max-w-7xl mx-auto px-6 h-full flex flex-col justify-end pb-24 md:pb-32">
+          {projects.length > 0 ? (
+            <motion.div
+              key={`text-${currentHeroIndex}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="max-w-4xl"
+            >
+              <div className="mb-8 flex flex-wrap items-center gap-4">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-2.5 backdrop-blur-md">
+                  <Sparkles className="h-3 w-3 text-brown-400" />
+                  <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-white">Featured Masterpiece</span>
+                </div>
+                {projects[currentHeroIndex].location && (
+                  <div className="flex items-center gap-2 text-white/60 text-[9px] font-bold uppercase tracking-[0.3em]">
+                     <MapPin size={12} className="text-brown-400" />
+                     <span>{projects[currentHeroIndex].location}</span>
+                  </div>
+                )}
               </div>
               
-              <h1 className="font-display text-7xl md:text-[11rem] leading-[0.8] text-charcoal-900 tracking-tighter">
-                Modern <br />
-                <span className="italic text-brown-600">Legacies.</span>
+              <h1 className="font-display text-5xl md:text-7xl lg:text-[7rem] leading-[0.9] text-white tracking-tight mb-10 drop-shadow-2xl">
+                {projects[currentHeroIndex].title}
               </h1>
               
-              <p className="mt-12 max-w-2xl text-lg md:text-2xl leading-relaxed text-charcoal-500 font-light">
-                A definitive collection of architectural transformations, where vision meets meticulous execution.
-              </p>
-            </div>
-          </ScrollReveal>
+              <div className="flex flex-wrap items-center gap-10 mb-12 border-l border-white/20 pl-8">
+                 <div className="flex flex-col gap-2">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">Category</span>
+                    <span className="text-sm font-light tracking-widest text-white">{projects[currentHeroIndex].type}</span>
+                 </div>
+                 {projects[currentHeroIndex].area && (
+                   <div className="flex flex-col gap-2">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">Area</span>
+                      <span className="text-sm font-light tracking-widest text-white">{projects[currentHeroIndex].area}</span>
+                   </div>
+                 )}
+                 {projects[currentHeroIndex].completionYear && (
+                   <div className="flex flex-col gap-2">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">Year</span>
+                      <span className="text-sm font-light tracking-widest text-white">{projects[currentHeroIndex].completionYear}</span>
+                   </div>
+                 )}
+              </div>
+
+              <button 
+                onClick={() => openProject(projects[currentHeroIndex])}
+                className="group inline-flex items-center gap-4 rounded-full bg-white px-8 py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-charcoal-900 transition-all hover:bg-brown-600 hover:text-white"
+              >
+                <span>Explore Gallery</span>
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
+          ) : (
+             <div className="h-64" /> 
+          )}
         </div>
+
+        {/* Carousel Indicators */}
+        {projects.length > 0 && (
+          <div className="absolute bottom-12 right-6 md:right-12 z-30 flex items-center gap-4">
+             <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">
+               0{currentHeroIndex + 1} / 0{Math.min(projects.length, 5)}
+             </span>
+             <div className="flex gap-2">
+               {projects.slice(0, 5).map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setCurrentHeroIndex(idx)}
+                    className={`transition-all duration-500 rounded-full h-1.5 ${
+                      currentHeroIndex === idx ? 'w-8 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'
+                    }`}
+                  />
+               ))}
+             </div>
+          </div>
+        )}
       </section>
 
       {/* CHAPTER 2: THE CURATION (Filters & Grid) */}

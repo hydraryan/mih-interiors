@@ -7,8 +7,8 @@ export async function GET() {
     name: 'MIH Interiors',
     alternateName: 'MIH Architects and Interiors',
     url: 'https://mihinteriors.in',
-    telephone: '+91-98885-45403',
-    email: 'miharchitect@gmail.com',
+    telephone: '+91 6399936333',
+    email: 'info@mihinteriors.in',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A, Near Oyster Hotel',

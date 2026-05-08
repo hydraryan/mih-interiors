@@ -20,7 +20,8 @@ import {
   MoreVertical,
   ShieldCheck,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Trash2,
 } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -64,6 +65,7 @@ export default function LeadsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     fetchLeads()
@@ -101,6 +103,28 @@ export default function LeadsPage() {
       console.error('Failed to update lead status', err)
     } finally {
       setIsUpdating(false)
+    }
+  }
+
+  const deleteLead = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this lead? This action cannot be undone.')) {
+      return
+    }
+    
+    setIsDeleting(true)
+    try {
+      const res = await fetch(`/api/admin/leads/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        setLeads(prev => prev.filter(l => l._id !== id))
+        setSelectedLead(null)
+      }
+    } catch (err) {
+      console.error('Failed to delete lead', err)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -287,7 +311,15 @@ export default function LeadsPage() {
                     <Phone className="h-4 w-4" />
                     Call Lead
                   </a>
-                  <button className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-charcoal-900/10 bg-white text-charcoal-700 transition hover:bg-charcoal-900 hover:text-white">
+                  <button 
+                    onClick={() => deleteLead(selectedLead._id)}
+                    disabled={isDeleting}
+                    title="Delete lead"
+                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
+                  >
+                    {isDeleting ? <Clock className="h-5 w-5 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                  </button>
+                  <button className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-charcoal-900/10 bg-white text-charcoal-700 transition hover:bg-charcoal-900 hover:text-white">
                     <ExternalLink className="h-5 w-5" />
                   </button>
                 </div>

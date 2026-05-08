@@ -24,6 +24,8 @@ export async function PUT(
       revalidatePath('/', 'layout')
       revalidatePath('/services')
       revalidatePath(`/services/${service.slug}`)
+      revalidatePath('/admin/services')
+      revalidatePath('/admin/pricing')
     }
     if (!service) {
       return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 })
@@ -51,6 +53,8 @@ export async function DELETE(
     await Service.findByIdAndDelete(id)
     revalidatePath('/', 'layout')
     revalidatePath('/services')
+    revalidatePath('/admin/services')
+    revalidatePath('/admin/pricing')
     return NextResponse.json({ success: true, message: 'Service deleted' })
   } catch (err: any) {
     console.error('Admin API Error (DELETE /api/admin/services/[id]):', err)

@@ -143,6 +143,17 @@ export async function syncWebsiteMediaAssets() {
     { src: '/about-hero.png', title: 'About Hero', placements: ['About page'] },
     { src: '/about-vision.png', title: 'About Vision', placements: ['About page'] },
     { src: '/about-founder.png', title: 'About Founder', placements: ['About page'] },
+    // Magazine Showcase Images
+    { src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200', title: 'Intelligent Kitchens Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200', title: 'Living Room Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200', title: 'Master En-suite Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=1200', title: 'Wardrobe Details Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200', title: 'Commercial Office Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&q=80&w=1200', title: 'Retail Showroom Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=1200', title: 'Restaurant Cafe Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200', title: 'Healthcare Clinic Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&q=80&w=1200', title: 'Smart Home Showcase', placements: ['Services Showcase'] },
+    { src: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=1200', title: 'Outdoor Balcony Showcase', placements: ['Services Showcase'] },
   ]
 
   for (const item of mainPageSeeds) {

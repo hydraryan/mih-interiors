@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
-import { getActiveMediaMap } from '@/lib/media'
 import AboutClient from '@/components/about/AboutClient'
+import { getActiveMediaMap } from '@/lib/media'
+import dbConnect from '@/lib/mongodb'
+import TeamMember from '@/lib/models/TeamMember'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'About MIH Interiors | Ar. Mohit Mahajan | Best Interior Designer Chandigarh',
-  description: 'Learn about MIH Interiors — founded by Ar. Mohit Mahajan in 2007. 18+ years of premium interior design in Chandigarh, Mohali & Panchkula. 1000+ residential and commercial projects completed.',
+  description: 'Learn about MIH Interiors, founded by Ar. Mohit Mahajan in 2007. 18+ years of premium interior design in Chandigarh, Mohali, and Panchkula with 1000+ projects completed.',
   alternates: { canonical: 'https://mihinteriors.in/about' },
   keywords: [
     'Ar Mohit Mahajan', 'MIH Interiors founder', 'interior designer chandigarh',
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'About MIH Interiors | Ar. Mohit Mahajan | Interior Designer Chandigarh',
-    description: 'Meet the team behind Chandigarh\'s most trusted interior design firm. 18+ years, 1000+ projects, 5-star rated.',
+    description: 'Meet the team behind Chandigarh\'s trusted interior design studio. 18+ years of practice and 1000+ projects delivered.',
     url: 'https://mihinteriors.in/about',
     type: 'website',
     images: [{ url: '/about-hero.png', width: 1200, height: 630, alt: 'MIH Interiors Team' }],
@@ -45,8 +47,13 @@ const aboutJsonLd = {
 }
 
 export default async function AboutPage() {
-  const media = await getActiveMediaMap()
-  
+  await dbConnect()
+
+  const [media, teamMembers] = await Promise.all([
+    getActiveMediaMap(),
+    TeamMember.find({ isActive: true }).sort({ order: 1 }).lean(),
+  ])
+
   const images = {
     hero: media.resolve('/about-hero.png'),
     vision: media.resolve('/about-vision.png'),
@@ -56,10 +63,12 @@ export default async function AboutPage() {
     founder: media.resolve('/about-founder.png'),
   }
 
+  const plainTeamMembers = JSON.parse(JSON.stringify(teamMembers))
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }} />
-      <AboutClient images={images} />
+      <AboutClient images={images} teamMembers={plainTeamMembers} />
     </>
   )
 }

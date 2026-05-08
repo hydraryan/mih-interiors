@@ -12,7 +12,7 @@ export async function GET() {
     const [services, media] = await Promise.all([
       Service.find({ publishStatus: 'published' })
       .sort({ order: 1, createdAt: -1 })
-      .select('title slug category shortDescription hero order')
+      .select('title slug category shortDescription startingPrice hero order')
       .lean(),
       getActiveMediaMap(),
     ])

@@ -1,14 +1,29 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Save, ArrowLeft, Loader2, Search, CheckCircle2 } from 'lucide-react'
 import MediaSelectorModal from '@/components/admin/MediaSelectorModal'
+import { formatStartingPrice } from '@/lib/services/pricing'
+
+type ServiceDetails = {
+  _id: string
+  title?: string
+  category?: string
+  shortDescription?: string
+  startingPrice?: number | null
+  publishStatus?: string
+  showOnHomepage?: boolean
+  hero?: {
+    title?: string
+    subtitle?: string
+    image?: string
+  }
+}
 
 export default function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
@@ -18,6 +33,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
     title: '',
     category: '',
     shortDescription: '',
+    startingPrice: '',
     publishStatus: 'draft',
     showOnHomepage: false,
     hero: {
@@ -28,36 +44,37 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
   })
 
   useEffect(() => {
-    fetchService()
-  }, [id])
-
-  const fetchService = async () => {
-    try {
-      const res = await fetch(`/api/services`)
-      const data = await res.json()
-      if (data.success) {
-        const service = data.services.find((s: any) => s._id === id)
-        if (service) {
-          setFormData({
-            title: service.title || '',
-            category: service.category || '',
-            shortDescription: service.shortDescription || '',
-            publishStatus: service.publishStatus || 'draft',
-            showOnHomepage: service.showOnHomepage || false,
-            hero: {
-              title: service.hero?.title || '',
-              subtitle: service.hero?.subtitle || '',
-              image: service.hero?.image || ''
-            }
-          })
+    const loadService = async () => {
+      try {
+        const res = await fetch(`/api/admin/services`)
+        const data = await res.json() as { success?: boolean; services?: ServiceDetails[] }
+        if (data.success) {
+          const service = data.services?.find((item) => item._id === id)
+          if (service) {
+            setFormData({
+              title: service.title || '',
+              category: service.category || '',
+              shortDescription: service.shortDescription || '',
+              startingPrice: service.startingPrice?.toString() || '',
+              publishStatus: service.publishStatus || 'draft',
+              showOnHomepage: service.showOnHomepage || false,
+              hero: {
+                title: service.hero?.title || '',
+                subtitle: service.hero?.subtitle || '',
+                image: service.hero?.image || ''
+              }
+            })
+          }
         }
+      } catch (error: unknown) {
+        console.error('Error fetching service:', error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Error fetching service:', error)
-    } finally {
-      setLoading(false)
     }
-  }
+
+    void loadService()
+  }, [id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,10 +82,15 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
     setMessage(null)
 
     try {
+      const payload = {
+        ...formData,
+        startingPrice: formData.startingPrice === '' ? undefined : Number(formData.startingPrice),
+      }
+
       const res = await fetch(`/api/admin/services/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       })
 
       const data = await res.json()
@@ -78,8 +100,11 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
       } else {
         throw new Error(data.error || 'Failed to update')
       }
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
+    } catch (error: unknown) {
+      setMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'Failed to update service',
+      })
     } finally {
       setSaving(false)
     }
@@ -151,7 +176,26 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
                   <option value="residential">Residential</option>
                   <option value="commercial">Commercial</option>
                   <option value="construction">Construction</option>
+                  <option value="architecture">Architecture</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-charcoal-500">Starting Price (INR)</label>
+                <input
+                  type="number"
+                  min="0"
+                  inputMode="numeric"
+                  value={formData.startingPrice}
+                  onChange={(e) => setFormData({ ...formData, startingPrice: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-cream-50 border border-cream-200 rounded focus:outline-none focus:border-brown-400 transition-colors"
+                  placeholder="e.g. 650000"
+                />
+                <p className="text-[10px] text-charcoal-400">
+                  Displayed publicly as {formatStartingPrice(Number(formData.startingPrice) || null) || 'the starting price'}
+                </p>
               </div>
             </div>
 
@@ -240,8 +284,8 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
                   </p>
                 </div>
                 {formData.hero.image && (
-                  <div className="w-full md:w-48 aspect-video relative rounded border border-cream-200 overflow-hidden bg-cream-50 flex-shrink-0 group">
-                    <img src={formData.hero.image} alt="Preview" className="w-full h-full object-cover" />
+                  <div className="w-full md:w-48 aspect-video relative rounded border border-cream-200 overflow-hidden bg-cream-50 shrink-0 group">
+                    <Image src={formData.hero.image} alt="Preview" fill className="object-cover" />
                     <div className="absolute inset-0 bg-charcoal-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                        <button 
                          type="button"

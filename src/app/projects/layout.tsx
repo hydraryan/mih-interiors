@@ -2,6 +2,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import QuoteChatbot from '@/components/chatbot/QuoteChatbot'
 import WhatsAppButton from '@/components/layout/WhatsAppButton'
+import InstagramButton from '@/components/layout/InstagramButton'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default function ProjectsLayout({
       <Footer />
       <QuoteChatbot />
       <WhatsAppButton />
+      <InstagramButton />
     </div>
   )
 }

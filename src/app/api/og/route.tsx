@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       <rect x="0" y="0" width="8" height="630" fill="#3D1F0D"/>
       <text x="60" y="200" font-family="Georgia, serif" font-size="72" font-weight="bold" fill="#1A1A1A" text-anchor="start">${title.slice(0, 40)}</text>
       <text x="60" y="280" font-family="Georgia, serif" font-size="36" fill="#3D1F0D" text-anchor="start">${subtitle.slice(0, 60)}</text>
-      <text x="60" y="560" font-family="Arial, sans-serif" font-size="28" fill="#888" text-anchor="start">MIH Interiors · Chandigarh · +91 98885 45403</text>
+      <text x="60" y="560" font-family="Arial, sans-serif" font-size="28" fill="#888" text-anchor="start">MIH Interiors · Chandigarh · +91 6399936333</text>
       <text x="60" y="510" font-family="Arial, sans-serif" font-size="24" fill="#3D1F0D" text-anchor="start">Interior Design · Construction · 3D Visualization</text>
     </svg>
   `

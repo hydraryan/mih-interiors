@@ -5,6 +5,7 @@ import {
   type PackageTier,
   type ResidentialHomeType,
 } from '@/lib/chatbot/mihKnowledge'
+import type { ChatbotPrices } from '@/lib/chatbot/chatbotPrices'
 
 export type PersonalizationConsent = 'pending' | 'accepted' | 'declined'
 export type DeviceTier = 'entry' | 'mid' | 'premium'
@@ -153,7 +154,7 @@ export const buildDeviceSignalsFromBrowser = (): DeviceSignals | null => {
   }
 }
 
-export const getBaseRangeFromAnswers = (answers: Record<string, string>): BaseRange | null => {
+export const getBaseRangeFromAnswers = (answers: Record<string, string>, prices?: ChatbotPrices): BaseRange | null => {
   const projectType = answers.greeting
   const scope = answers.scope
   const resType = answers.residential_type as ResidentialHomeType | undefined
@@ -161,20 +162,23 @@ export const getBaseRangeFromAnswers = (answers: Record<string, string>): BaseRa
   const areaSqft = parseFloat(answers.area_sqft || '0')
 
   // Case 1: Standard BHK Interior Design (Fixed rates from table)
-  if (projectType === 'residential' && scope === 'interiors' && resType && resType !== 'Kothi' && packageTier && RESIDENTIAL_PACKAGE_RATES[resType]?.[packageTier] != null) {
-    const rate = RESIDENTIAL_PACKAGE_RATES[resType][packageTier]
-    return {
-      minLakh: roundOne(rate * 0.95),
-      maxLakh: roundOne(rate * 1.12),
-      context: `${resType} ${packageTier} Interiors`,
+  if (projectType === 'residential' && scope === 'interiors' && resType && resType !== 'Kothi' && packageTier) {
+    const rate = prices ? prices.residential[resType]?.[packageTier] : RESIDENTIAL_PACKAGE_RATES[resType]?.[packageTier]
+    if (rate != null) {
+      return {
+        minLakh: roundOne(rate * 0.95),
+        maxLakh: roundOne(rate * 1.12),
+        context: `${resType} ${packageTier} Interiors`,
+      }
     }
   }
 
   // Case 2: Area-based Calculation (Kothi, Commercial, Full Construction)
   if (areaSqft > 0) {
     if (scope === 'interiors' && projectType === 'commercial') {
-      // Commercial Interiors Only: Assuming a slightly lower rate than full construction or same base
-      const baseRate = packageTier === 'luxury' ? 1800 : packageTier === 'premium' ? 1500 : 1200
+      const baseRate = prices
+        ? (packageTier === 'luxury' ? prices.commercial.luxury : packageTier === 'premium' ? prices.commercial.premium : prices.commercial.essential)
+        : (packageTier === 'luxury' ? 1800 : packageTier === 'premium' ? 1500 : 1200)
       return {
         minLakh: roundOne((areaSqft * baseRate) / 100000),
         maxLakh: roundOne((areaSqft * baseRate * 1.2) / 100000),
@@ -183,10 +187,9 @@ export const getBaseRangeFromAnswers = (answers: Record<string, string>): BaseRa
     }
 
     if (scope === 'full' || resType === 'Kothi' || projectType === 'commercial') {
-      // Construction + Interiors or Kothi/Commercial: Rs. 2,000+ per sq ft
-      let baseRate = 2000
-      if (packageTier === 'premium') baseRate = 2400
-      if (packageTier === 'luxury') baseRate = 3000
+      let baseRate = prices?.construction.standard ?? 2000
+      if (packageTier === 'premium') baseRate = prices?.construction.premium ?? 2400
+      if (packageTier === 'luxury') baseRate = prices?.construction.luxury ?? 3000
 
       return {
         minLakh: roundOne((areaSqft * baseRate) / 100000),
@@ -293,8 +296,9 @@ export const buildEstimateMessage = (
   consent: PersonalizationConsent,
   signals: DeviceSignals | null,
   contactName?: string,
+  prices?: ChatbotPrices,
 ): { message: string; pricingDecision: PricingDecision | null } => {
-  const baseRange = getBaseRangeFromAnswers(answers)
+  const baseRange = getBaseRangeFromAnswers(answers, prices)
   const namePrefix = contactName?.trim() ? `${contactName.trim()}, ` : ''
 
   if (!baseRange) {

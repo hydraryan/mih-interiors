@@ -292,13 +292,13 @@ export default function Footer() {
                 <MapPin size={15} className="mt-0.5 shrink-0 text-amber-500" />
                 MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017
               </a>
-              <a href="tel:+919888545403" className="group flex items-center gap-3 font-body text-sm text-charcoal-900/50 hover:text-amber-600 transition-colors">
+              <a href="tel:+916399936333" className="group flex items-center gap-3 font-body text-sm text-charcoal-900/50 hover:text-amber-600 transition-colors">
                 <Phone size={15} className="shrink-0 text-amber-500" />
-                +91 98885 45403
+                +91 6399936333
               </a>
-              <a href="mailto:miharchitect@gmail.com" className="group flex items-center gap-3 font-body text-sm text-charcoal-900/50 hover:text-amber-600 transition-colors">
+              <a href="mailto:info@mihinteriors.in" className="group flex items-center gap-3 font-body text-sm text-charcoal-900/50 hover:text-amber-600 transition-colors">
                 <Mail size={15} className="shrink-0 text-amber-500" />
-                miharchitect@gmail.com
+                info@mihinteriors.in
               </a>
             </div>
 

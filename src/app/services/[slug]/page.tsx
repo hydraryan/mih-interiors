@@ -3,14 +3,18 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import OpenQuoteLink from '@/components/services/OpenQuoteLink';
 import dbConnect from "@/lib/mongodb";
 import Service from "@/lib/models/Service";
+import Project from "@/lib/models/Project";
 import { getActiveMediaMap } from "@/lib/media";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import ServiceProjectsClient from "@/components/services/ServiceProjectsClient";
+import { buildServiceQuoteHref, buildStartsFromLabel } from "@/lib/services/pricing";
 import { 
   ChefHat, Sofa, Bed, Cpu, 
   Briefcase, ShoppingBag, Utensils, Activity,
-  CheckCircle2, ArrowRight, Sparkles, Plus, Ruler, Heart, Zap
+  CheckCircle2, ArrowRight, Sparkles, Plus, Ruler, Heart, Zap, Home, PenTool
 } from "lucide-react";
 
 type Props = {
@@ -19,7 +23,7 @@ type Props = {
 
 const iconMap: Record<string, any> = {
   ChefHat, Sofa, Bed, Cpu, 
-  Briefcase, ShoppingBag, Utensils, Activity, Ruler, Heart, Zap
+  Briefcase, ShoppingBag, Utensils, Activity, Ruler, Heart, Zap, Home, PenTool, Sparkles
 };
 
 async function getService(slug: string) {
@@ -73,6 +77,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'construction company chandigarh', 'architects chandigarh', 'villa construction chandigarh',
       'kothi construction chandigarh', 'home construction chandigarh',
     ],
+    architecture: [
+      'house front design chandigarh', 'front elevation design chandigarh', 'home facade design chandigarh',
+      'villa elevation design', 'residential architecture chandigarh',
+    ],
   }
 
   const keywords = serviceKeywordMap[resolvedParams.slug] || [
@@ -119,6 +127,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   // Determine the best premium hero image based on the service domain
   const getPremiumHero = (slug: string) => {
+    if (slug === 'architecture') return service.hero?.image || "/services-hero.png";
     if (slug.includes('residential')) return "/res-hero.png";
     if (slug.includes('commercial')) return "/com-hero.png";
     if (slug.includes('construction') || slug.includes('architecture')) return "/arch-hero.png";
@@ -126,6 +135,84 @@ export default async function ServiceDetailPage({ params }: Props) {
   };
 
   const heroImage = getPremiumHero(resolvedParams.slug);
+
+  // Ensure Construction + Interiors has a feature grid
+  if (resolvedParams.slug === 'construction-architecture') {
+    const hasFeatureGrid = service.sections?.some((s: any) => s.type === 'feature_grid');
+    if (!hasFeatureGrid) {
+      if (!service.sections) service.sections = [];
+      service.sections.unshift({
+        type: 'feature_grid',
+        title: 'Construction & Architecture Solutions',
+        subtitle: 'From foundation to finishing, we provide comprehensive solutions for your dream project.',
+        content: [
+          { title: 'Structural Design', desc: 'Robust engineering for safety and longevity.', icon: 'Activity' },
+          { title: '3D Planning', desc: 'Photorealistic visualizations before construction begins.', icon: 'Cpu' },
+          { title: 'Material Selection', desc: 'Premium materials sourced for durability and aesthetics.', icon: 'ShoppingBag' },
+          { title: 'Project Management', desc: 'End-to-end execution with strict timelines.', icon: 'Briefcase' }
+        ]
+      });
+    }
+  }
+
+  // 1. Fetch related projects based on slug
+  let projectQuery: any = {};
+  if (resolvedParams.slug === 'residential-interiors') {
+    projectQuery.type = 'Residential';
+  } else if (resolvedParams.slug === 'commercial-interiors') {
+    projectQuery.type = 'Commercial';
+  } else {
+    // For construction and architecture, fetch all or featured
+    projectQuery.featured = true;
+  }
+  
+  const [projectsData, media] = await Promise.all([
+    Project.find(projectQuery).sort({ order: 1, createdAt: -1 }).lean(),
+    getActiveMediaMap(),
+  ]);
+
+  const relatedProjects = projectsData
+    .map((p) => {
+      const images = media.filter(p.images || []);
+      const mainImage = media.isVisible(p.mainImage)
+        ? p.mainImage
+        : images[0] || media.resolve(p.mainImage);
+
+      return {
+        ...p,
+        _id: p._id.toString(), // Convert ObjectId to string for client component
+        mainImage,
+        images: images.length ? images : [mainImage].filter(Boolean),
+      };
+    })
+    .filter((p) => p.mainImage)
+    .slice(0, 6); // Limit to 6 projects
+
+  const getFeatureImage = (title: string, index: number) => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('kitchen')) return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('living')) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('suite') || t.includes('bed')) return 'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('smart') || t.includes('tech')) return 'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('office') || t.includes('corporate')) return 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('retail') || t.includes('store')) return 'https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('restaurant') || t.includes('cafe')) return 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('health') || t.includes('clinic')) return 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('elevation') || t.includes('front')) return 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('facade') || t.includes('material')) return 'https://images.unsplash.com/photo-1541888086225-f6740f9e8020?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('gate') || t.includes('boundary')) return 'https://images.unsplash.com/photo-1510627489930-0c1b0bfb6785?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('3d') || t.includes('plan')) return 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('structure') || t.includes('design')) return 'https://images.unsplash.com/photo-1541888086225-f6740f9e8020?auto=format&fit=crop&q=80&w=1200';
+    if (t.includes('management') || t.includes('project')) return 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=1200';
+    
+    const fallbacks = [
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200",
+      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=1200",
+      "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=1200",
+      "https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=1200",
+    ];
+    return fallbacks[index % fallbacks.length];
+  };
 
   return (
     <div className="min-h-screen bg-[#fbf4eb] text-charcoal-900 font-body selection:bg-brown-200 overflow-x-hidden">
@@ -141,7 +228,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               '@type': 'InteriorDesigner',
               name: 'MIH Interiors',
               url: 'https://mihinteriors.in',
-              telephone: '+91-98885-45403',
+              telephone: '+91 6399936333',
               address: {
                 '@type': 'PostalAddress',
                 streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A',
@@ -173,7 +260,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-white pt-24 md:pt-32">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-white/20 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#fbf4eb] z-20" />
           <Image 
             src={heroImage}
             alt={service.title}
@@ -200,6 +287,16 @@ export default async function ServiceDetailPage({ params }: Props) {
               <p className="mt-12 max-w-2xl text-lg md:text-2xl leading-relaxed text-charcoal-500 font-light">
                 {service.shortDescription}
               </p>
+
+              <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
+                <OpenQuoteLink href={buildServiceQuoteHref(`/services/${service.slug}`, service.slug)} className="inline-flex items-center gap-3 rounded-full bg-charcoal-900 px-6 py-4 text-[10px] font-bold uppercase tracking-[0.26em] text-white transition-colors hover:bg-brown-900">
+                  <Plus className="h-4 w-4" />
+                  {buildStartsFromLabel(service.startingPrice)}
+                </OpenQuoteLink>
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-charcoal-400">
+                  Opens the quote chatbot with this service preselected
+                </span>
+              </div>
             </div>
           </ScrollReveal>
         </div>
@@ -221,16 +318,69 @@ export default async function ServiceDetailPage({ params }: Props) {
                   <p className="font-body text-charcoal-500 max-w-sm text-sm font-light leading-relaxed">{section.subtitle}</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
                   {section.content?.map((item: any, i: number) => {
                     const Icon = iconMap[item.icon] || CheckCircle2;
+                    const imageSrc = getFeatureImage(item.title, i);
+                    
+                    const getGridClasses = (index: number) => {
+                      if (index === 0) return 'md:col-span-8 md:row-span-1 h-[50vh] md:h-[60vh]';
+                      if (index === 1) return 'md:col-span-4 md:row-span-2 h-[50vh] md:h-auto';
+                      if (index === 2) return 'md:col-span-4 md:row-span-1 h-[50vh] md:h-[45vh]';
+                      if (index === 3) return 'md:col-span-4 md:row-span-1 h-[50vh] md:h-[45vh]';
+                      return 'md:col-span-4 h-[40vh]';
+                    };
+                    
                     return (
-                      <div key={i} className="group bg-white p-12 rounded-[3rem] border border-charcoal-900/5 hover:border-brown-300 hover:shadow-2xl hover:shadow-brown-900/5 transition-all duration-700">
-                        <div className="w-14 h-14 bg-[#fbf4eb] text-brown-600 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-brown-600 group-hover:text-white transition-all duration-500">
-                          <Icon size={24} strokeWidth={1.5} />
+                      <div key={i} className={`group relative rounded-3xl overflow-hidden ${getGridClasses(i)}`}>
+                        {/* Background Image */}
+                        <Image 
+                          src={imageSrc} 
+                          alt={item.title} 
+                          fill 
+                          className="object-cover transition-transform duration-[2s] group-hover:scale-105"
+                        />
+                        
+                        {/* Overlays */}
+                        <div className="absolute inset-0 bg-charcoal-900/20 group-hover:bg-charcoal-900/40 transition-colors duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/90 via-charcoal-900/20 to-transparent opacity-90" />
+                        
+                        {/* Content */}
+                        <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-between z-10">
+                          {/* Top Row: Icon & Number */}
+                          <div className="flex justify-between items-start">
+                            <div className="w-12 h-12 rounded-full border border-white/30 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-white group-hover:text-charcoal-900 transition-all duration-500">
+                              <Icon size={20} strokeWidth={1.5} />
+                            </div>
+                            <span className="font-display text-4xl text-white/40 group-hover:text-white transition-colors duration-500">
+                              0{i + 1}
+                            </span>
+                          </div>
+                          
+                          {/* Bottom Row: Text */}
+                          <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] w-full">
+                            <div className="flex items-end justify-between gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-4 opacity-60">
+                                  <span className="w-4 h-px bg-white"></span>
+                                  <span className="font-display text-[9px] uppercase tracking-[0.4em] text-white">Focus Area</span>
+                                </div>
+                                <h3 className="font-display text-3xl md:text-4xl text-white mb-2 leading-tight drop-shadow-lg">{item.title}</h3>
+                              </div>
+                              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white group-hover:text-charcoal-900 transition-all duration-500 text-white shrink-0">
+                                <Plus size={16} className="group-hover:rotate-90 transition-transform duration-500" />
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                              <div className="overflow-hidden">
+                                <p className="font-body text-white/80 text-sm md:text-base leading-relaxed font-light mt-4 mb-2 max-w-lg">
+                                  {item.desc}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <h3 className="font-display text-2xl text-charcoal-900 mb-4">{item.title}</h3>
-                        <p className="font-body text-charcoal-500 text-xs leading-relaxed font-light">{item.desc}</p>
                       </div>
                     );
                   })}
@@ -242,7 +392,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             {section.type === 'process_steps' && (
               <ScrollReveal>
                 <div className="bg-charcoal-900 rounded-[4rem] p-12 md:p-24 lg:p-32 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brown-600/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/4" />
+                  <div className="absolute top-0 right-0 w-200 h-200 bg-brown-600/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/4" />
                   
                   <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12 border-b border-white/10 pb-16">
                     <div className="max-w-2xl space-y-6">
@@ -256,7 +406,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                     {section.content?.map((step: any, i: number) => (
                       <div key={i} className="group relative space-y-8">
                         <div className="flex flex-col gap-8">
-                          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-display text-2xl text-brown-400 group-hover:bg-brown-600 group-hover:text-white transition-all duration-700">
+                          <div className="w-16 h-16 rounded-full bg-white/5 border-12 border-white/10 flex items-center justify-center font-display text-2xl text-brown-400 group-hover:bg-brown-600 group-hover:text-white transition-all duration-700">
                             {step.step || (i + 1)}
                           </div>
                           <div className="space-y-4">
@@ -297,7 +447,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 
                 <div className="flex-1 w-full">
                   <ScrollReveal direction={idx % 2 === 0 ? 'right' : 'left'}>
-                    <div className="relative aspect-[4/5] w-full rounded-[4rem] overflow-hidden shadow-2xl shadow-brown-900/10 border-[12px] border-white">
+                    <div className="relative aspect-4/5 w-full rounded-4xl overflow-hidden shadow-2xl shadow-brown-900/10 border-12 border-white">
                       <Image
                         src={section.content?.image || "/placeholder.jpg"}
                         alt={section.title}
@@ -313,6 +463,9 @@ export default async function ServiceDetailPage({ params }: Props) {
           </section>
         ))}
       </div>
+
+      {/* NEW: Related Projects */}
+      <ServiceProjectsClient projects={relatedProjects} />
 
       {/* CHAPTER 3: THE INQUIRY (Dynamic CTA) */}
       <section className="py-56 px-6 bg-white rounded-t-[5rem]">

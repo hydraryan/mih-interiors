@@ -38,11 +38,6 @@ export default function AdminLoginForm() {
         callbackUrl,
       })
 
-      // Debugging aid: log the result so we can inspect `ok`, `error`, and `url`.
-      // This helps diagnose silent failures where the token/cookie isn't set.
-      // eslint-disable-next-line no-console
-      console.log('signIn result:', result)
-
       if (!result || result.error) {
         setError('Invalid admin ID or password.')
         return
@@ -53,7 +48,9 @@ export default function AdminLoginForm() {
         return
       }
 
-      router.replace(result.url || callbackUrl)
+      // Explicitly use the relative callbackUrl instead of result.url
+      // result.url might be absolute based on NEXTAUTH_URL, taking the user away from the admin subdomain
+      router.replace(callbackUrl)
       router.refresh()
     } catch {
       setError('Unable to sign in right now. Please try again.')
@@ -115,7 +112,7 @@ export default function AdminLoginForm() {
         </section>
 
         <section className="flex min-h-screen items-center justify-center px-5 py-8 sm:px-8">
-          <div className="w-full max-w-[430px]">
+          <div className="w-full max-w-107.5">
             <div className="mb-8 flex items-center gap-3 lg:hidden">
               <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm">
                 <Image src="/logo.png" alt="MIH" width={28} height={28} className="h-7 w-7 object-contain" />

@@ -11,6 +11,9 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+
+  // Pages with dark hero backgrounds where navbar needs light text
+  const isDarkPage = pathname === '/3d-rendering'
   
   useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +77,7 @@ export default function Navbar() {
               initial={{ height: 42, filter: 'brightness(0)' }}
               animate={{ 
                 height: isScrolled ? 28 : 42,
-                filter: isScrolled ? 'brightness(1) contrast(1.2)' : 'brightness(0)' 
+                filter: isScrolled ? 'brightness(1) contrast(1.2)' : (isDarkPage ? 'brightness(0) invert(1)' : 'brightness(0)') 
               }}
               src="/logo.png" 
               alt="MIH Interiors" 
@@ -92,8 +95,8 @@ export default function Navbar() {
                   href={link.href} 
                   className={`font-body text-[11px] uppercase tracking-[0.25em] font-bold transition-all duration-300 relative group whitespace-nowrap
                     ${isActive 
-                      ? (isScrolled ? 'text-blush-600' : 'text-brown-900 border-b border-brown-900') 
-                      : (isScrolled ? 'text-charcoal-700 hover:text-brown-900' : 'text-charcoal-800 hover:text-brown-900')}`}
+                      ? (isScrolled ? 'text-blush-600' : (isDarkPage ? 'text-[#C8A47E] border-b border-[#C8A47E]' : 'text-brown-900 border-b border-brown-900')) 
+                      : (isScrolled ? 'text-charcoal-700 hover:text-brown-900' : (isDarkPage ? 'text-white/80 hover:text-white' : 'text-charcoal-800 hover:text-brown-900'))}`}
                 >
                   {link.label}
                   {isActive && isScrolled && (
@@ -114,14 +117,14 @@ export default function Navbar() {
               className={`hidden md:flex items-center gap-2 px-8 py-3 rounded-full font-body text-[10px] uppercase tracking-widest font-bold transition-all duration-500 active:scale-95 whitespace-nowrap
                 ${isScrolled 
                   ? 'bg-charcoal-900 text-white hover:bg-blush-500 shadow-lg shadow-charcoal-900/10' 
-                  : 'bg-charcoal-900 text-white hover:bg-brown-900 shadow-xl shadow-black/10'}`}
+                  : (isDarkPage ? 'bg-[#C8A47E] text-[#1a1511] hover:bg-white shadow-xl shadow-black/20' : 'bg-charcoal-900 text-white hover:bg-brown-900 shadow-xl shadow-black/10')}`}
             >
               Get a Quote <ArrowRight size={12} />
             </button>
 
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden p-2 rounded-full transition-colors ${isScrolled ? 'text-charcoal-900 hover:bg-charcoal-900/5' : 'text-charcoal-900 hover:bg-black/5'}`}
+              className={`lg:hidden p-2 rounded-full transition-colors ${isScrolled ? 'text-charcoal-900 hover:bg-charcoal-900/5' : (isDarkPage ? 'text-white hover:bg-white/10' : 'text-charcoal-900 hover:bg-black/5')}`}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}

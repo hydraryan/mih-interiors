@@ -96,7 +96,7 @@ export default async function Home() {
                 name: 'How to contact MIH Interiors?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Call +91-98885-45403, email miharchitect@gmail.com, or visit the office at SCO 62-63, 3rd Floor, Sector 17A, Chandigarh 160017.',
+                  text: 'Call +91 6399936333, email info@mihinteriors.in, or visit the office at SCO 62-63, 3rd Floor, Sector 17A, Chandigarh 160017.',
                 },
               },
             ],

@@ -2,30 +2,41 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Trash2, Edit2, ExternalLink, Home, Star, Save, X, Check, Loader2 } from 'lucide-react'
+import { Trash2, Edit2, ExternalLink, Star, Loader2, IndianRupee } from 'lucide-react'
+import { formatStartingPrice } from '@/lib/services/pricing'
+
+type ServiceRow = {
+  _id: string
+  title: string
+  slug: string
+  category?: string
+  publishStatus?: string
+  showOnHomepage?: boolean
+  startingPrice?: number | null
+}
 
 export default function AdminServicesPage() {
-  const [services, setServices] = useState<any[]>([])
+  const [services, setServices] = useState<ServiceRow[]>([])
   const [loading, setLoading] = useState(true)
   const [savingId, setSavingId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchServices()
-  }, [])
-
-  const fetchServices = async () => {
-    try {
-      const res = await fetch('/api/services')
-      const data = await res.json()
-      if (data.success) {
-        setServices(data.services)
+    const loadServices = async () => {
+      try {
+        const res = await fetch('/api/admin/services')
+        const data = await res.json() as { success?: boolean; services?: ServiceRow[] }
+        if (data.success) {
+          setServices(data.services || [])
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Error fetching services:', error)
-    } finally {
-      setLoading(false)
     }
-  }
+
+    void loadServices()
+  }, [])
 
   const toggleHomepage = async (id: string, current: boolean) => {
     setSavingId(id)
@@ -38,7 +49,7 @@ export default function AdminServicesPage() {
       if (res.ok) {
         setServices(services.map(s => s._id === id ? { ...s, showOnHomepage: !current } : s))
       }
-    } catch (error) {
+    } catch {
       alert('Failed to update service')
     } finally {
       setSavingId(null)
@@ -53,7 +64,7 @@ export default function AdminServicesPage() {
       if (res.ok) {
         setServices(services.filter(s => s._id !== id))
       }
-    } catch (error) {
+    } catch {
       alert('Failed to delete service')
     }
   }
@@ -94,6 +105,12 @@ export default function AdminServicesPage() {
                   <strong className="text-charcoal-900">{homepageCount}</strong> services visible on Homepage
                 </span>
               </div>
+              <Link
+                href="/admin/pricing"
+                className="text-[10px] font-bold uppercase tracking-widest text-brown-700 hover:text-brown-900"
+              >
+                Edit pricing
+              </Link>
             </div>
 
             <table className="w-full text-left font-body text-sm">
@@ -102,6 +119,7 @@ export default function AdminServicesPage() {
                   <th className="px-6 py-4">Home Page</th>
                   <th className="px-6 py-4">Service Name</th>
                   <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Starting Price</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -135,6 +153,12 @@ export default function AdminServicesPage() {
                       <span className="px-2 py-1 rounded-full bg-cream-100 text-charcoal-600 text-[10px] font-bold uppercase tracking-wider">
                         {service.category}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-[#fbf4eb] px-3 py-1.5 text-sm font-semibold text-brown-800">
+                        <IndianRupee size={14} />
+                        <span>{formatStartingPrice(service.startingPrice) || 'Not set'}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${

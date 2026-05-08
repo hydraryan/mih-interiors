@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   BarChart3,
   Brain,
+  Building2,
   FolderKanban,
   Image as ImageIcon,
   LineChart,
@@ -146,9 +147,10 @@ export default function AdminDashboard() {
   const metrics = useMemo(() => statCards(analytics), [analytics])
 
   return (
-    <div className="space-y-6">
-      <header className="rounded-4xl border border-white/70 bg-white/85 p-6 shadow-[0_24px_70px_rgba(54,41,33,0.08)] backdrop-blur-xl lg:p-8">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <div className="space-y-8">
+      <header className="relative overflow-hidden rounded-[2.5rem] border border-white/60 bg-white/70 p-8 shadow-[0_32px_80px_rgba(54,41,33,0.06)] backdrop-blur-2xl lg:p-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-brown-50/40 via-transparent to-brown-100/20" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-4 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.28em] text-brown-700">
               <Sparkles className="h-3.5 w-3.5" />
@@ -159,12 +161,11 @@ export default function AdminDashboard() {
               A merged view of chatbot, lead, content, traffic, and search signals. GA4 and Search Console panels gracefully fall back when credentials are not configured.
             </p>
           </div>
-
           <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
-            <Link href="/admin/services" className="rounded-full border border-cream-200 bg-white px-4 py-2 text-brown-800 transition-colors hover:border-brown-200 hover:bg-[#fbf4eb]">Services</Link>
-            <Link href="/admin/projects" className="rounded-full border border-cream-200 bg-white px-4 py-2 text-brown-800 transition-colors hover:border-brown-200 hover:bg-[#fbf4eb]">Projects</Link>
-            <Link href="/admin/blogs" className="rounded-full border border-cream-200 bg-white px-4 py-2 text-brown-800 transition-colors hover:border-brown-200 hover:bg-[#fbf4eb]">Blogs</Link>
-            <Link href="/admin/media" className="rounded-full border border-cream-200 bg-white px-4 py-2 text-brown-800 transition-colors hover:border-brown-200 hover:bg-[#fbf4eb]">Media</Link>
+            <Link href="/admin/services" className="rounded-[1.25rem] border border-white/60 bg-white/50 backdrop-blur-md px-5 py-2.5 text-brown-800 transition-all shadow-sm hover:shadow-md hover:bg-white/90">Services</Link>
+            <Link href="/admin/projects" className="rounded-[1.25rem] border border-white/60 bg-white/50 backdrop-blur-md px-5 py-2.5 text-brown-800 transition-all shadow-sm hover:shadow-md hover:bg-white/90">Projects</Link>
+            <Link href="/admin/blogs" className="rounded-[1.25rem] border border-white/60 bg-white/50 backdrop-blur-md px-5 py-2.5 text-brown-800 transition-all shadow-sm hover:shadow-md hover:bg-white/90">Blogs</Link>
+            <Link href="/admin/media" className="rounded-[1.25rem] border border-white/60 bg-white/50 backdrop-blur-md px-5 py-2.5 text-brown-800 transition-all shadow-sm hover:shadow-md hover:bg-white/90">Media</Link>
           </div>
         </div>
       </header>
@@ -176,29 +177,34 @@ export default function AdminDashboard() {
         {metrics.map((metric) => {
           const Icon = metric.icon
           return (
-            <div key={metric.label} className="rounded-3xl border border-cream-200 bg-white p-6 shadow-sm">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">{metric.label}</span>
-                <Icon className="h-4 w-4 text-brown-700" />
+            <div key={metric.label} className="group relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all hover:shadow-lg hover:bg-white/80">
+              <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br from-brown-100/40 to-transparent blur-2xl group-hover:bg-brown-200/50 transition-colors" />
+              <div className="relative mb-4 flex items-center justify-between gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal-500/80">{metric.label}</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+                  <Icon className="h-4 w-4 text-brown-700" />
+                </div>
               </div>
-              <p className="font-display text-4xl text-brown-800">{metric.value}</p>
+              <p className="relative font-display text-4xl text-brown-800">{metric.value}</p>
             </div>
           )
         })}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <div className="rounded-4xl border border-cream-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-center gap-2">
-            <Brain className="h-4 w-4 text-brown-700" />
+        <div className="rounded-[2.5rem] border border-white/60 bg-white/60 p-8 shadow-sm backdrop-blur-xl">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+              <Brain className="h-4 w-4 text-brown-700" />
+            </div>
             <h2 className="font-display text-2xl text-brown-800">Chatbot funnel</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-[1.5rem] border border-white/80 bg-white/50 p-5 shadow-sm">
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">FAQ response rate</p>
               <p className="mt-2 font-display text-3xl text-charcoal-900">{analytics.chatbot.faqResponseRatePct}%</p>
             </div>
-            <div className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-4">
+            <div className="rounded-[1.5rem] border border-white/80 bg-white/50 p-5 shadow-sm">
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Consent opt-in</p>
               <p className="mt-2 font-display text-3xl text-charcoal-900">{analytics.chatbot.consentOptInRatePct}%</p>
             </div>
@@ -237,19 +243,21 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-4xl border border-cream-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-brown-700" />
+        <div className="rounded-[2.5rem] border border-white/60 bg-white/60 p-8 shadow-sm backdrop-blur-xl">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+              <BarChart3 className="h-4 w-4 text-brown-700" />
+            </div>
             <h2 className="font-display text-2xl text-brown-800">Traffic and SEO</h2>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             {[
               { label: 'Sessions', value: analytics.traffic.sessions ?? 0 },
               { label: 'Users', value: analytics.traffic.users ?? 0 },
               { label: 'Page views', value: analytics.traffic.pageViews ?? 0 },
             ].map((item) => (
-              <div key={item.label} className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-4">
+              <div key={item.label} className="rounded-[1.5rem] border border-white/80 bg-white/50 p-5 shadow-sm">
                 <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">{item.label}</p>
                 <p className="mt-2 font-display text-3xl text-charcoal-900">{item.value}</p>
               </div>
@@ -341,20 +349,22 @@ export default function AdminDashboard() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <div className="rounded-4xl border border-cream-200 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex items-center gap-2">
-            <Palette className="h-4 w-4 text-brown-700" />
+        <div className="rounded-[2.5rem] border border-white/60 bg-white/60 p-8 shadow-sm backdrop-blur-xl">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+              <Palette className="h-4 w-4 text-brown-700" />
+            </div>
             <h2 className="font-display text-2xl text-brown-800">Content inventory</h2>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {[
               { label: 'Blogs', value: analytics.content.blogCount },
               { label: 'Projects', value: analytics.content.projectCount },
               { label: 'Services', value: analytics.content.serviceCount },
               { label: 'Media', value: analytics.content.mediaCount },
             ].map((item) => (
-              <div key={item.label} className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-4 text-center">
+              <div key={item.label} className="rounded-[1.5rem] border border-white/80 bg-white/50 backdrop-blur-sm p-5 text-center shadow-sm hover:bg-white/70 transition-all">
                 <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">{item.label}</p>
                 <p className="mt-2 font-display text-3xl text-charcoal-900">{item.value}</p>
               </div>
@@ -396,32 +406,74 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-4xl border border-cream-200 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex items-center gap-2">
-            <LineChart className="h-4 w-4 text-brown-700" />
+        <div className="rounded-[2.5rem] border border-white/60 bg-white/60 p-8 shadow-sm backdrop-blur-xl">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+              <LineChart className="h-4 w-4 text-brown-700" />
+            </div>
             <h2 className="font-display text-2xl text-brown-800">Quick actions</h2>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Link href="/admin/media" className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-5 transition-colors hover:border-brown-200 hover:bg-white">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Media manager</p>
-              <h3 className="mt-2 font-display text-2xl text-charcoal-900">Review assets</h3>
-              <p className="mt-2 text-sm leading-6 text-charcoal-600">Search, edit, upload, and archive public or remote media records.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link href="/admin/media" className="group rounded-[2rem] border border-white/60 bg-white/50 p-6 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50 group-hover:bg-charcoal-900 group-hover:text-white transition-colors duration-300">
+                  <ImageIcon className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brown-600">Media Library</p>
+                  <h3 className="mt-1 font-display text-2xl text-charcoal-900 group-hover:text-brown-800 transition-colors">Review assets</h3>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-charcoal-600">Search, edit, upload, and archive public or remote media records.</p>
             </Link>
-            <Link href="/admin/projects" className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-5 transition-colors hover:border-brown-200 hover:bg-white">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Portfolio</p>
-              <h3 className="mt-2 font-display text-2xl text-charcoal-900">Manage projects</h3>
-              <p className="mt-2 text-sm leading-6 text-charcoal-600">Keep featured work and project details current.</p>
+            <Link href="/admin/pricing" className="group rounded-[2rem] border border-white/60 bg-white/50 p-6 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50 group-hover:bg-charcoal-900 group-hover:text-white transition-colors duration-300">
+                  <LineChart className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brown-600">Pricing</p>
+                  <h3 className="mt-1 font-display text-2xl text-charcoal-900 group-hover:text-brown-800 transition-colors">Manage Pricing</h3>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-charcoal-600">Update starting prices and chatbot cost estimations.</p>
             </Link>
-            <Link href="/admin/blogs" className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-5 transition-colors hover:border-brown-200 hover:bg-white">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Editorial</p>
-              <h3 className="mt-2 font-display text-2xl text-charcoal-900">Edit blogs</h3>
-              <p className="mt-2 text-sm leading-6 text-charcoal-600">Draft, publish, and feature the latest SEO content.</p>
+            <Link href="/admin/projects" className="group rounded-[2rem] border border-white/60 bg-white/50 p-6 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50 group-hover:bg-charcoal-900 group-hover:text-white transition-colors duration-300">
+                  <FolderKanban className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brown-600">Portfolio</p>
+                  <h3 className="mt-1 font-display text-2xl text-charcoal-900 group-hover:text-brown-800 transition-colors">Manage projects</h3>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-charcoal-600">Keep featured work and project details current.</p>
             </Link>
-            <Link href="/admin/services" className="rounded-3xl border border-cream-100 bg-[#fbf4eb] p-5 transition-colors hover:border-brown-200 hover:bg-white">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Services</p>
-              <h3 className="mt-2 font-display text-2xl text-charcoal-900">Adjust service pages</h3>
-              <p className="mt-2 text-sm leading-6 text-charcoal-600">Review the content powering the public service sections.</p>
+            <Link href="/admin/blogs" className="group rounded-[2rem] border border-white/60 bg-white/50 p-6 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50 group-hover:bg-charcoal-900 group-hover:text-white transition-colors duration-300">
+                  <Newspaper className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brown-600">Editorial</p>
+                  <h3 className="mt-1 font-display text-2xl text-charcoal-900 group-hover:text-brown-800 transition-colors">Edit blogs</h3>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-charcoal-600">Draft, publish, and feature the latest SEO content.</p>
+            </Link>
+            <Link href="/admin/services" className="group rounded-[2rem] border border-white/60 bg-white/50 p-6 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:shadow-md sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50 group-hover:bg-charcoal-900 group-hover:text-white transition-colors duration-300">
+                  <Building2 className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brown-600">Services</p>
+                  <h3 className="mt-1 font-display text-2xl text-charcoal-900 group-hover:text-brown-800 transition-colors">Adjust service pages</h3>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-charcoal-600">Review the content powering the public service sections.</p>
             </Link>
           </div>
 
@@ -434,8 +486,8 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="rounded-4xl border border-brown-100 bg-[#fbf4eb] p-6 shadow-sm">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <section className="rounded-4xl border border-white/60 bg-white/70 p-8 shadow-sm backdrop-blur-xl">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-brown-700">Last refresh</p>
             <h3 className="mt-2 font-display text-3xl text-charcoal-900">

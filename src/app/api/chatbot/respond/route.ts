@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import ChatbotEvent from '@/lib/models/ChatbotEvent'
 import { buildFaqResponse } from '@/lib/chatbot/faqRetriever'
+import { getChatbotPrices } from '@/lib/chatbot/chatbotPrices'
 
 type RespondRequestBody = {
   conversationId?: string
@@ -43,7 +44,9 @@ export async function POST(req: NextRequest) {
       userAgent: req.headers.get('user-agent') ?? undefined,
     })
 
-    const faq = buildFaqResponse(message)
+    // Load dynamic prices from database
+    const chatbotPrices = await getChatbotPrices()
+    const faq = buildFaqResponse(message, chatbotPrices)
 
     await ChatbotEvent.create({
       conversationId,

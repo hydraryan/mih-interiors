@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Lead from '@/lib/models/Lead'
+import { sendNotification } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,8 +32,15 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date(),
     })
     
-    // In a real app, you'd send an email here too
-    // await sendLeadNotification(lead)
+    // Send email notification (fire-and-forget)
+    void sendNotification('contact_form', {
+      name,
+      email,
+      phone,
+      city: city || 'Not specified',
+      message,
+      projectType: projectType || 'General Inquiry',
+    })
     
     return NextResponse.json({ 
       success: true, 

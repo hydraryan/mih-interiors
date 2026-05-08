@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
     const service = await Service.create(body)
     revalidatePath('/', 'layout')
     revalidatePath('/services')
+    revalidatePath('/admin/services')
+    revalidatePath('/admin/pricing')
     return NextResponse.json({ success: true, service }, { status: 201 })
   } catch (err: any) {
     console.error('Admin API Error (POST /api/admin/services):', err)

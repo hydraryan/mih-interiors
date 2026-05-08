@@ -9,6 +9,7 @@ import {
   type PackageTier,
   type ResidentialHomeType,
 } from '@/lib/chatbot/mihKnowledge'
+import type { ChatbotPrices } from '@/lib/chatbot/chatbotPrices'
 
 type KnowledgeDoc = {
   id: string
@@ -131,8 +132,8 @@ const detectPackageTier = (query: string): PackageTier | null => {
 
 const includesAny = (query: string, keywords: string[]) => keywords.some((keyword) => query.includes(keyword))
 
-const buildPackagePriceAnswer = (homeType: ResidentialHomeType, tier: PackageTier): FaqResponse => {
-  const base = RESIDENTIAL_PACKAGE_RATES[homeType][tier]
+const buildPackagePriceAnswer = (homeType: ResidentialHomeType, tier: PackageTier, prices?: ChatbotPrices): FaqResponse => {
+  const base = prices ? prices.residential[homeType][tier] : RESIDENTIAL_PACKAGE_RATES[homeType][tier]
   const minRange = Math.round(base * 0.95 * 10) / 10
   const maxRange = Math.round(base * 1.12 * 10) / 10
 
@@ -158,9 +159,12 @@ const buildTierInclusionAnswer = (tier: PackageTier): FaqResponse => {
   }
 }
 
-const buildConstructionAnswer = (): FaqResponse => {
+const buildConstructionAnswer = (prices?: ChatbotPrices): FaqResponse => {
+  const minSqFt = prices?.constructionOnly.min ?? CONSTRUCTION_RATE_CARD.constructionOnly.minPerSqFt
+  const maxSqFt = prices?.constructionOnly.max ?? CONSTRUCTION_RATE_CARD.constructionOnly.maxPerSqFt
+  const withInteriors = prices?.construction.standard ?? CONSTRUCTION_RATE_CARD.constructionWithInteriors.minPerSqFt
   return {
-    answer: `MIH's current reference rates are Rs. ${CONSTRUCTION_RATE_CARD.constructionOnly.minPerSqFt} - Rs. ${CONSTRUCTION_RATE_CARD.constructionOnly.maxPerSqFt} per sq. ft for construction-only scope, and Rs. ${CONSTRUCTION_RATE_CARD.constructionWithInteriors.minPerSqFt}+ per sq. ft for construction plus interiors. Final costing is refined after design and scope confirmation.`,
+    answer: `MIH's current reference rates are Rs. ${minSqFt} - Rs. ${maxSqFt} per sq. ft for construction-only scope, and Rs. ${withInteriors}+ per sq. ft for construction plus interiors. Final costing is refined after design and scope confirmation.`,
     confidence: 0.9,
     citations: ['construction-rate-card'],
     mode: 'direct',
@@ -247,7 +251,7 @@ const buildRetrievalAnswer = (query: string): FaqResponse => {
   }
 }
 
-export const buildFaqResponse = (query: string): FaqResponse => {
+export const buildFaqResponse = (query: string, prices?: ChatbotPrices): FaqResponse => {
   const normalized = normalizeText(query)
 
   if (!normalized) {
@@ -264,13 +268,13 @@ export const buildFaqResponse = (query: string): FaqResponse => {
   }
 
   if (includesAny(normalized, ['construction', 'sq ft', 'square feet', 'per sqft', 'per sq'])) {
-    return buildConstructionAnswer()
+    return buildConstructionAnswer(prices)
   }
 
   const homeType = detectHomeType(normalized)
   const tier = detectPackageTier(normalized)
   if (homeType && tier) {
-    return buildPackagePriceAnswer(homeType, tier)
+    return buildPackagePriceAnswer(homeType, tier, prices)
   }
 
   if (tier && includesAny(normalized, ['include', 'inclusion', 'covers', 'what comes', 'contains'])) {

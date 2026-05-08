@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import Floating3DButton from "@/components/layout/Floating3DButton";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -179,8 +181,8 @@ export default function RootLayout({
                   },
                   image: 'https://mihinteriors.in/hero_image.jpg',
                   description: 'MIH Interiors is Chandigarh\'s most trusted interior design firm with 18+ years of experience, 1000+ completed projects across Chandigarh, Mohali, and Panchkula.',
-                  telephone: '+91-98885-45403',
-                  email: 'miharchitect@gmail.com',
+                  telephone: '+91 6399936333',
+                  email: 'info@mihinteriors.in',
                   foundingDate: '2007',
                   numberOfEmployees: { '@type': 'QuantitativeValue', value: 15 },
                   address: {
@@ -287,7 +289,10 @@ export default function RootLayout({
             }),
           }}
         />
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
+        <Floating3DButton />
       </body>
     </html>
   );

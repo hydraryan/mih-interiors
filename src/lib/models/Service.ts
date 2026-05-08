@@ -6,8 +6,9 @@ const ServiceSchema = new mongoose.Schema({
   category: { 
     type: String, 
     required: true,
-    enum: ['residential', 'commercial', 'construction']
+    enum: ['residential', 'commercial', 'construction', 'architecture']
   },
+  startingPrice: { type: Number, min: 0 },
   shortDescription: { type: String },
   hero: {
     title: { type: String },

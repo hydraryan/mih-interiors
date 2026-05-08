@@ -8,6 +8,7 @@ import { urls } from '@/lib/urls'
 import {
   LayoutDashboard,
   Building2,
+  IndianRupee,
   FolderKanban,
   Newspaper,
   Images,
@@ -17,56 +18,100 @@ import {
   Sparkles,
   PanelsTopLeft,
   ShieldCheck,
+  Users2,
+  Box,
+  Bell,
 } from 'lucide-react'
+
+// Hook to automatically log out users after 15 minutes of inactivity
+function useInactivityLogout(timeoutMinutes = 15) {
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    
+    const logout = () => {
+      signOut({ callbackUrl: urls.admin('/login') })
+    }
+
+    const resetTimer = () => {
+      clearTimeout(timeout)
+      timeout = setTimeout(logout, timeoutMinutes * 60 * 1000)
+    }
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart']
+    events.forEach((event) => document.addEventListener(event, resetTimer, true))
+    resetTimer()
+
+    return () => {
+      clearTimeout(timeout)
+      events.forEach((event) => document.removeEventListener(event, resetTimer, true))
+    }
+  }, [timeoutMinutes])
+}
 
 const navItems = [
   { href: urls.admin('/'), label: 'Dashboard', description: 'Analytics and lead signals', icon: LayoutDashboard },
   { href: urls.admin('/leads'), label: 'Leads', description: 'Chatbot captured inquiries', icon: ShieldCheck },
+  { href: urls.admin('/leads/3d'), label: '3D Leads', description: '3D rendering inquiries', icon: Box },
   { href: urls.admin('/services'), label: 'Services', description: 'Service pages and content', icon: Building2 },
+  { href: urls.admin('/pricing'), label: 'Pricing', description: 'Editable starting prices', icon: IndianRupee },
   { href: urls.admin('/projects'), label: 'Projects', description: 'Portfolio and featured work', icon: FolderKanban },
   { href: urls.admin('/blogs'), label: 'Blogs', description: 'Editorial and SEO posts', icon: Newspaper },
+  { href: urls.admin('/team'), label: 'Team', description: 'Studio members and staff', icon: Users2 },
   { href: urls.admin('/media'), label: 'Media', description: 'Public asset library', icon: Images },
+  { href: urls.admin('/notifications'), label: 'Notifications', description: 'Email alert settings', icon: Bell },
 ]
 
 function getSectionTitle(pathname: string) {
   if (pathname === '/admin') return 'Dashboard'
+  if (pathname.startsWith('/admin/leads/3d')) return '3D Visualization Leads'
   if (pathname.startsWith('/admin/leads')) return 'Lead Management'
   if (pathname.startsWith('/admin/services')) return 'Services'
+  if (pathname.startsWith('/admin/pricing')) return 'Pricing'
   if (pathname.startsWith('/admin/projects')) return 'Projects'
   if (pathname.startsWith('/admin/blogs')) return 'Blogs'
+  if (pathname.startsWith('/admin/team')) return 'Team Management'
   if (pathname.startsWith('/admin/media')) return 'Media Library'
+  if (pathname.startsWith('/admin/notifications')) return 'Notifications'
   return 'Admin Portal'
 }
 
 function getSectionSubtitle(pathname: string) {
   if (pathname === '/admin') return 'Monitor chatbot performance, leads, and exports.'
+  if (pathname.startsWith('/admin/leads/3d')) return 'Review requests for 3D visualization services.'
   if (pathname.startsWith('/admin/leads')) return 'Review and manage chatbot inquiries and quote requests.'
   if (pathname.startsWith('/admin/services')) return 'Manage service content and landing pages.'
+  if (pathname.startsWith('/admin/pricing')) return 'Keep public starting prices editable in one place.'
   if (pathname.startsWith('/admin/projects')) return 'Update the featured portfolio and project cards.'
   if (pathname.startsWith('/admin/blogs')) return 'Publish and refine blog content.'
+  if (pathname.startsWith('/admin/team')) return 'Manage the studio staff and team profiles.'
   if (pathname.startsWith('/admin/media')) return 'Browse studio assets stored in public/.'
+  if (pathname.startsWith('/admin/notifications')) return 'Configure email notification recipients.'
   return 'Protected workspace for the MIH interiors team.'
 }
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const isLoginRoute = pathname === '/admin/login' || pathname === '/login'
 
   // Close the mobile menu whenever the route changes
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
 
+  // Initialize inactivity logout (only run if not on login page)
+  useInactivityLogout(15)
+
   const activeTitle = useMemo(() => getSectionTitle(pathname), [pathname])
   const activeSubtitle = useMemo(() => getSectionSubtitle(pathname), [pathname])
 
-  if (pathname === '/admin/login') {
+  if (isLoginRoute) {
     return <>{children}</>
   }
 
   return (
-    <div className="min-h-screen bg-[#f6efe6] text-charcoal-900">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,164,126,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(54,41,33,0.08),transparent_24%)]" />
+    <div className="min-h-screen bg-[#fcf8f5] text-charcoal-900">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,164,126,0.12),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(54,41,33,0.06),transparent_35%)]" />
 
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-80 flex-col border-r border-white/60 bg-white/82 backdrop-blur-xl lg:flex">
         <div className="flex items-center gap-3 border-b border-cream-200 px-8 py-7">
@@ -100,18 +145,19 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`group flex items-start gap-4 rounded-[1.2rem] border px-4 py-4 transition-all duration-300 ${
+                  className={`group relative flex items-start gap-4 rounded-3xl border px-4 py-4 transition-all duration-300 overflow-hidden ${
                     isActive
-                      ? 'border-brown-200 bg-white shadow-lg shadow-brown-900/5'
-                      : 'border-transparent hover:border-cream-200 hover:bg-white/70'
+                      ? 'border-brown-200/60 bg-white/60 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-brown-100'
+                      : 'border-transparent hover:border-white hover:bg-white/40 hover:shadow-sm'
                   }`}
                 >
-                  <div className={`mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl transition-colors ${isActive ? 'bg-charcoal-900 text-white' : 'bg-charcoal-900/5 text-charcoal-500 group-hover:bg-brown-50 group-hover:text-brown-700'}`}>
+                  {isActive && <div className="absolute inset-0 bg-gradient-to-r from-brown-50/50 to-transparent" />}
+                  <div className={`relative mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] transition-all duration-300 ${isActive ? 'bg-charcoal-900 text-white shadow-md' : 'bg-white text-charcoal-400 shadow-sm group-hover:bg-brown-50 group-hover:text-brown-700'}`}>
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className={`font-semibold ${isActive ? 'text-charcoal-900' : 'text-charcoal-700'}`}>{item.label}</p>
-                    <p className="mt-1 text-xs leading-5 text-charcoal-500">{item.description}</p>
+                  <div className="relative min-w-0 flex-1">
+                    <p className={`font-semibold tracking-tight transition-colors ${isActive ? 'text-charcoal-900' : 'text-charcoal-600 group-hover:text-charcoal-900'}`}>{item.label}</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-charcoal-500/80">{item.description}</p>
                   </div>
                 </Link>
               )

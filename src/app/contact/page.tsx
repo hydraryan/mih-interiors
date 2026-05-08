@@ -107,14 +107,14 @@ export default function ContactPage() {
                     <ContactInfoItem 
                       icon={Phone} 
                       label="Direct Talk" 
-                      value="+91 98885 45403" 
-                      href="tel:+919888545403" 
+                      value="+91 6399936333" 
+                      href="tel:+916399936333" 
                     />
                     <ContactInfoItem 
                       icon={Mail} 
                       label="Editorial Write" 
-                      value="miharchitect@gmail.com" 
-                      href="mailto:miharchitect@gmail.com" 
+                      value="info@mihinteriors.in" 
+                      href="mailto:info@mihinteriors.in" 
                     />
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function ContactPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <MinimalInput 
                               label="Phone" 
-                              placeholder="E.g. +91 98885 45403" 
+                              placeholder="E.g. +91 6399936333" 
                               type="tel"
                               value={formData.phone}
                               onChange={(val) => setFormData(f => ({ ...f, phone: val }))}

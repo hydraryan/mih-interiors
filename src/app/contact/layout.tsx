@@ -2,11 +2,12 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import QuoteChatbot from '@/components/chatbot/QuoteChatbot'
 import WhatsAppButton from '@/components/layout/WhatsAppButton'
+import InstagramButton from '@/components/layout/InstagramButton'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact MIH Interiors | Interior Designer Chandigarh | +91 98885 45403',
-  description: 'Contact MIH Interiors for free interior design consultation in Chandigarh. Call +91 98885 45403. Visit SCO 62-63, Sector 17A, Chandigarh.',
+  title: 'Contact MIH Interiors | Interior Designer Chandigarh | +91 6399936333',
+  description: 'Contact MIH Interiors for free interior design consultation in Chandigarh. Call +91 6399936333. Visit SCO 62-63, Sector 17A, Chandigarh.',
   alternates: { canonical: 'https://mihinteriors.in/contact' },
   openGraph: {
     title: 'Contact MIH Interiors | Free Consultation',
@@ -30,8 +31,8 @@ export default function ContactLayout({ children }: { children: React.ReactNode 
             mainEntity: {
               '@type': 'InteriorDesigner',
               name: 'MIH Interiors',
-              telephone: '+91-98885-45403',
-              email: 'miharchitect@gmail.com',
+              telephone: '+91 6399936333',
+              email: 'info@mihinteriors.in',
               address: {
                 '@type': 'PostalAddress',
                 streetAddress: 'SCO 62-63, 3rd Floor, Sector 17A, Near Oyster Hotel',
@@ -49,6 +50,7 @@ export default function ContactLayout({ children }: { children: React.ReactNode 
       <Footer />
       <QuoteChatbot />
       <WhatsAppButton />
+      <InstagramButton />
     </div>
   )
 }

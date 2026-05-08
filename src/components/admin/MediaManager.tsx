@@ -501,8 +501,9 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
 
   return (
     <div className="space-y-6">
-      <section className="border border-white/70 bg-white/90 p-5 shadow-[0_18px_48px_rgba(54,41,33,0.08)] sm:p-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <section className="relative overflow-hidden rounded-[2.5rem] border border-white/60 bg-white/70 p-8 shadow-[0_32px_80px_rgba(54,41,33,0.06)] backdrop-blur-2xl lg:p-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-brown-50/40 via-transparent to-brown-100/20" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-brown-700">Photo Library</p>
             <h2 className="mt-2 font-display text-4xl text-charcoal-900">Manage website photos</h2>
@@ -515,7 +516,7 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
             <button
               type="button"
               onClick={startNew}
-              className="inline-flex items-center gap-2 rounded-md bg-charcoal-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brown-800"
+              className="inline-flex items-center gap-2 rounded-full bg-charcoal-900 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-lg transition hover:bg-brown-800"
             >
               <Plus className="h-4 w-4" />
               Add photo
@@ -523,7 +524,7 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
             <button
               type="button"
               onClick={() => void loadAssets()}
-              className="inline-flex items-center gap-2 rounded-md border border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-charcoal-800 transition hover:border-brown-700/30"
+              className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/60 backdrop-blur-md px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-brown-800 shadow-sm transition hover:shadow-md hover:bg-white"
             >
               <RefreshCw className="h-4 w-4" />
               Refresh
@@ -537,21 +538,24 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
             { label: 'Needs review', value: draftCount, icon: Save },
             { label: 'Hidden photos', value: hiddenCount, icon: Archive },
           ].map((item) => (
-            <div key={item.label} className="rounded-lg border border-cream-200 bg-[#fbf7f1] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-charcoal-800">{item.label}</p>
-                <item.icon className="h-4 w-4 text-brown-700" />
+            <div key={item.label} className="group relative overflow-hidden rounded-[1.5rem] border border-white/60 bg-white/50 backdrop-blur-xl p-5 shadow-sm transition-all hover:shadow-md hover:bg-white/80">
+              <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br from-brown-100/40 to-transparent blur-2xl group-hover:bg-brown-200/50 transition-colors" />
+              <div className="relative flex items-center justify-between gap-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal-500/80">{item.label}</p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm border border-brown-50">
+                  <item.icon className="h-4 w-4 text-brown-700" />
+                </div>
               </div>
-              <p className="mt-2 font-display text-3xl text-charcoal-900">{item.value}</p>
+              <p className="relative mt-2 font-display text-4xl text-brown-800">{item.value}</p>
             </div>
           ))}
         </div>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_430px]">
-        <div className="border border-white/70 bg-white/90 p-4 shadow-[0_18px_48px_rgba(54,41,33,0.08)] sm:p-5">
-          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-            <label className="flex h-12 items-center gap-2 rounded-md border border-cream-200 bg-white px-4 text-sm">
+        <div className="rounded-[2.5rem] border border-white/60 bg-white/60 p-6 shadow-sm backdrop-blur-xl sm:p-8">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <label className="flex h-14 items-center gap-2 rounded-[1.25rem] border border-white/80 bg-white/80 px-5 text-sm shadow-sm transition-all focus-within:ring-2 focus-within:ring-brown-200">
               <Search className="h-4 w-4 text-charcoal-800/45" />
               <input
                 value={search}
@@ -572,10 +576,10 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
                   key={option.value}
                   type="button"
                   onClick={() => setStatusFilter(option.value)}
-                  className={`rounded-md px-3 py-2 text-xs font-semibold transition ${
+                  className={`rounded-full px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] transition-all ${
                     statusFilter === option.value
-                      ? 'bg-charcoal-900 text-white'
-                      : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
+                      ? 'bg-charcoal-900 text-white shadow-md'
+                      : 'border border-white/80 bg-white/60 text-charcoal-700 shadow-sm hover:bg-white hover:shadow-md'
                   }`}
                 >
                   {option.label}
@@ -584,19 +588,19 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
             </div>
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-6 space-y-3">
             <div>
-              <p className="text-xs font-semibold text-charcoal-700 uppercase tracking-wide">Filter by page</p>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-charcoal-500">Filter by page</p>
+              <div className="mt-3 flex flex-wrap gap-2">
                 {['all', 'Homepage', 'Services', 'Projects', 'Blogs', 'About page', 'Gallery'].map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setPlacement(option)}
-                    className={`rounded-md px-3 py-2 text-xs font-semibold transition ${
+                    className={`rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.1em] transition-all ${
                       placement === option
-                        ? 'bg-green-100 text-green-900'
-                        : 'border border-cream-200 bg-white text-charcoal-700 hover:border-brown-700/30'
+                        ? 'bg-[#e5ecdb] text-green-900 ring-1 ring-green-600/20'
+                        : 'border border-white/80 bg-white/60 text-charcoal-700 shadow-sm hover:bg-white hover:shadow-md'
                     }`}
                   >
                     {option === 'all' ? 'All pages' : option}
@@ -640,7 +644,7 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
                 </div>
               ) : null}
 
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
                 {assets.map((asset) => {
                   const previewSrc = getPreviewSrc(asset)
                   const isSelected = selectedAsset?._id === asset._id
@@ -650,34 +654,34 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
                       key={asset._id}
                       type="button"
                       onClick={() => setSelectedId(asset._id || null)}
-                      className={`overflow-hidden rounded-lg border bg-white text-left transition hover:-translate-y-0.5 hover:shadow-lg ${
-                        isSelected ? 'border-brown-700 shadow-lg shadow-brown-900/10' : 'border-cream-200'
+                      className={`overflow-hidden rounded-[1.5rem] border bg-white/80 backdrop-blur-sm text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(54,41,33,0.08)] ${
+                        isSelected ? 'border-brown-300 shadow-xl shadow-brown-900/10 ring-2 ring-brown-100' : 'border-white/60 shadow-sm'
                       }`}
                     >
-                      <div className="relative aspect-4/3 bg-charcoal-900/5">
+                      <div className="relative aspect-4/3 bg-[#fcf8f5]">
                         <MediaPreview
                           src={previewSrc}
                           alt={asset.altText || asset.title}
                           className="h-full w-full object-cover"
-                          iconClassName="h-8 w-8"
+                          iconClassName="h-8 w-8 text-charcoal-300"
                           message="Preview unavailable"
                         />
-                        <span className="absolute left-2 top-2 rounded-md bg-white/92 px-2 py-1 text-[11px] font-semibold text-charcoal-800 shadow-sm">
+                        <span className="absolute left-3 top-3 rounded-md bg-white/92 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-charcoal-800 shadow-sm backdrop-blur-md">
                           {getFolderLabel(asset.folder)}
                         </span>
-                        <span className={`absolute right-2 top-2 rounded-md px-2 py-1 text-[11px] font-semibold shadow-sm ${
+                        <span className={`absolute right-3 top-3 rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] shadow-sm backdrop-blur-md ${
                           asset.status === 'active'
-                            ? 'bg-green-50 text-green-700'
+                            ? 'bg-green-50/90 text-green-700'
                             : asset.status === 'draft'
-                              ? 'bg-amber-50 text-amber-700'
-                              : 'bg-charcoal-900 text-white'
+                              ? 'bg-amber-50/90 text-amber-700'
+                              : 'bg-charcoal-900/90 text-white'
                         }`}>
                           {asset.status === 'active' ? 'Visible' : asset.status === 'draft' ? 'Review' : 'Hidden'}
                         </span>
                       </div>
-                      <div className="p-3">
+                      <div className="p-4">
                         <h3 className="truncate font-display text-xl text-charcoal-900">{asset.title}</h3>
-                        <p className="mt-1 line-clamp-2 min-h-10 text-sm leading-5 text-charcoal-700/65">
+                        <p className="mt-1 line-clamp-2 min-h-10 text-xs leading-relaxed text-charcoal-700/65">
                           {asset.caption || asset.altText || 'No caption added yet.'}
                         </p>
                       </div>
@@ -689,7 +693,7 @@ export default function MediaManager({ onSelect }: { onSelect?: (url: string) =>
           )}
         </div>
 
-        <aside className="border border-white/70 bg-white/90 p-4 shadow-[0_18px_48px_rgba(54,41,33,0.08)] sm:p-5">
+        <aside className="rounded-[2.5rem] border border-white/60 bg-white/60 p-6 shadow-sm backdrop-blur-xl sm:p-8">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brown-700">
