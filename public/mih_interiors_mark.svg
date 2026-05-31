@@ -1,0 +1,31 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <title>MIH Interiors — Compact Mark</title>
+
+  <!-- Background tile -->
+  <rect width="200" height="200" rx="20" fill="#FFFFFF"/>
+
+  <!-- M letterform -->
+  <!-- Left leg -->
+  <rect x="38" y="52" width="20" height="98" fill="#3B1F06"/>
+  <!-- Right leg -->
+  <rect x="142" y="52" width="20" height="98" fill="#3B1F06"/>
+  <!-- Left diagonal of M -->
+  <polygon points="38,52 58,52 100,100 58,100" fill="#3B1F06"/>
+  <!-- Right diagonal of M -->
+  <polygon points="142,52 162,52 142,100 100,100" fill="#3B1F06"/>
+  <!-- Center fill patch -->
+  <rect x="90" y="93" width="20" height="7" fill="#3B1F06"/>
+
+  <!-- Architectural base line -->
+  <rect x="28" y="150" width="144" height="6" rx="2" fill="#3B1F06"/>
+  <!-- Left column stump -->
+  <rect x="28" y="138" width="8" height="18" fill="#3B1F06"/>
+  <!-- Right column stump -->
+  <rect x="164" y="138" width="8" height="18" fill="#3B1F06"/>
+
+  <!-- Blueprint / construction lines above M -->
+  <line x1="84" y1="32" x2="84" y2="52" stroke="#3B1F06" stroke-width="1.5"/>
+  <line x1="100" y1="24" x2="100" y2="52" stroke="#3B1F06" stroke-width="1.5"/>
+  <line x1="116" y1="32" x2="116" y2="52" stroke="#3B1F06" stroke-width="1.5"/>
+  <line x1="76" y1="38" x2="124" y2="38" stroke="#3B1F06" stroke-width="1"/>
+</svg>

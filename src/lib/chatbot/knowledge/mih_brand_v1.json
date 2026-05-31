@@ -1,0 +1,45 @@
+{
+  "version": "mih_brand_v1",
+  "lastUpdated": "2026-04-26",
+  "company": {
+    "identity": {
+      "businessName": "MIH Interiors",
+      "founder": "Mohit Mahajan",
+      "clientLead": "Mohit Mahajan",
+      "officeAddress": "MIH INTERIORS SCO - 62-63 , 3rd Floor , Sector 17 A , Near Oyster Hotel CHANDIGARH, Chandigarh 160017",
+      "operatingGeography": ["Chandigarh", "Mohali", "Panchkula", "Punjab", "Pathankot"],
+      "established": "2007",
+      "brandPositioning": "Premium/Luxury interior design and construction services focusing on transparency and design excellence."
+    },
+    "services": {
+      "residential": ["Full home interiors", "Bungalows", "Villas", "1/2/3/4 BHK", "Baby rooms", "Wellness spaces"],
+      "commercial": ["Corporate offices", "Retail showrooms", "Hospitality", "Industrial factories", "Healthcare centers"],
+      "process": "Visualization-first process with mandatory 3D renders before execution."
+    },
+    "engagementModels": [
+      { "id": "design_execution", "label": "Design & Execution" },
+      { "id": "with_materials", "label": "With Materials" },
+      { "id": "without_materials", "label": "Without Materials" },
+      { "id": "percentage_basis", "label": "Percentage Basis" }
+    ],
+    "pricingPolicy": {
+      "residentialRates": {
+        "1BHK": { "essential": 5.5, "premium": 7.0, "luxury": 8.5 },
+        "2BHK": { "essential": 9.0, "premium": 12.0, "luxury": 16.0 },
+        "3BHK": { "essential": 15.0, "premium": 18.0, "luxury": 22.0 },
+        "4BHK": { "essential": 22.0, "premium": 27.0, "luxury": 35.0 },
+        "Kothi": { "essential": 22.0, "premium": 27.0, "luxury": 35.0 }
+      },
+      "constructionRates": {
+        "constructionOnly": { "min": 1250, "max": 1500, "unit": "per sq ft" },
+        "withInteriors": { "min": 2000, "unit": "per sq ft" }
+      },
+      "disclaimer": "Estimated range only; final quote after site review and detailed discussion."
+    },
+    "brandVoice": {
+      "tone": "Premium, luxury, professional, yet approachable.",
+      "style": "Clarity-first, trust-focused, transparent pricing.",
+      "fallbackPolicy": "Immediate WhatsApp handoff for low-confidence or out-of-scope queries."
+    }
+  }
+}
