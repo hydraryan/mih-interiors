@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import BlogPost from '@/lib/models/BlogPost'
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     await dbConnect()
@@ -11,7 +13,12 @@ export async function GET(request: Request) {
     
     const query: any = {};
     if (process.env.NODE_ENV === 'production' && !process.env.SHOW_DRAFTS) {
-      query.publishStatus = 'published';
+      // Be lenient: include items without a status or not explicitly draft
+      query.$or = [
+        { publishStatus: { $ne: 'draft' } },
+        { status: { $ne: 'draft' } },
+        { publishStatus: { $exists: false }, status: { $exists: false } }
+      ];
     }
     if (featured === 'true') query.featured = true
     

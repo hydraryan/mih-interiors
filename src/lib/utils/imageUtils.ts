@@ -5,6 +5,13 @@
 export function getDirectImageUrl(url: string): string {
   if (!url) return '';
 
+  // Handle local Windows paths that might have been accidentally saved
+  if (url.includes(':\\') || url.startsWith('C:')) {
+    // These paths are useless on a live server (Vercel)
+    // Fallback to a generic interior image or the original filename if it can be guessed
+    return '/hero_image.jpg';
+  }
+
   // Handle Google Drive links
   if (url.includes('drive.google.com')) {
     // Extract file ID

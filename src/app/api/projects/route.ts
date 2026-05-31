@@ -5,6 +5,8 @@ import dbConnect from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
 import { getActiveMediaMap } from '@/lib/media';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     await dbConnect();
@@ -19,7 +21,8 @@ export async function GET(request: Request) {
     // In development or if specifically requested, show drafts
     // Otherwise default to published
     if (!process.env.SHOW_DRAFTS && process.env.NODE_ENV === 'production') {
-      query.publishStatus = 'published';
+      // Use $ne: 'draft' to include existing projects that might not have the field yet
+      query.publishStatus = { $ne: 'draft' };
     }
 
     const [projects, media] = await Promise.all([

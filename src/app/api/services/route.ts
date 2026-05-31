@@ -4,6 +4,8 @@ import dbConnect from '@/lib/mongodb'
 import Service from '@/lib/models/Service'
 import { getActiveMediaMap } from '@/lib/media'
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     await dbConnect()
@@ -11,7 +13,8 @@ export async function GET() {
     // Public API usually only shows published services
     const query: any = {};
     if (process.env.NODE_ENV === 'production' && !process.env.SHOW_DRAFTS) {
-      query.publishStatus = 'published';
+      // Show everything that is NOT explicitly marked as 'draft'
+      query.publishStatus = { $ne: 'draft' };
     }
 
     const [services, media] = await Promise.all([

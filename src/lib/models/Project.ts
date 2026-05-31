@@ -34,6 +34,7 @@ const ProjectSchema: Schema = new Schema(
     mainImage: { type: String, required: true },
     completionDate: { type: Date },
     featured: { type: Boolean, default: false },
+    publishStatus: { type: String, enum: ['draft', 'published'], default: 'published' },
     order: { type: Number, default: 0 },
   },
   { timestamps: true }
