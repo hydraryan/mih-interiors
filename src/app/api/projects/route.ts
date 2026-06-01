@@ -7,6 +7,40 @@ import { getActiveMediaMap } from '@/lib/media';
 
 export const dynamic = 'force-dynamic';
 
+function normalizeText(value: unknown) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizeProjectPayload(body: any, existing?: { imagePublicIds?: string[]; mainImagePublicId?: string }) {
+  const images = Array.isArray(body.images)
+    ? body.images.map(normalizeText).filter(Boolean).slice(0, 5)
+    : [];
+
+  const nextImagePublicIds = Array.isArray(body.imagePublicIds)
+    ? body.imagePublicIds.map(normalizeText).slice(0, images.length)
+    : existing?.imagePublicIds?.slice(0, images.length) || [];
+
+  while (nextImagePublicIds.length < images.length) {
+    nextImagePublicIds.push('');
+  }
+
+  const mainImage = normalizeText(body.mainImage) || images[0] || '';
+  const mainImageIndex = images.indexOf(mainImage);
+  const mainImagePublicId =
+    normalizeText(body.mainImagePublicId) ||
+    (mainImageIndex >= 0 ? nextImagePublicIds[mainImageIndex] : '') ||
+    existing?.mainImagePublicId ||
+    '';
+
+  return {
+    ...body,
+    images,
+    imagePublicIds: nextImagePublicIds,
+    mainImage,
+    mainImagePublicId: mainImagePublicId || undefined,
+  };
+}
+
 export async function GET(request: Request) {
   try {
     await dbConnect();
@@ -55,7 +89,7 @@ export async function POST(request: Request) {
   try {
     await dbConnect();
     const body = await request.json();
-    const project = await Project.create(body);
+    const project = await Project.create(normalizeProjectPayload(body));
     revalidatePath('/', 'layout');
     revalidatePath('/projects');
     return NextResponse.json(project, { status: 201 });

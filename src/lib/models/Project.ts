@@ -7,7 +7,9 @@ export interface IProject extends Document {
   type: 'Residential' | 'Commercial';
   description: string;
   images: string[];
+  imagePublicIds?: string[];
   mainImage: string;
+  mainImagePublicId?: string;
   completionDate?: Date;
   featured: boolean;
   order: number;
@@ -31,7 +33,13 @@ const ProjectSchema: Schema = new Schema(
       required: true,
       validate: [(val: string[]) => val.length <= 5, '{PATH} exceeds the limit of 5']
     },
+    imagePublicIds: {
+      type: [String],
+      default: [],
+      validate: [(val: string[]) => val.length <= 5, '{PATH} exceeds the limit of 5'],
+    },
     mainImage: { type: String, required: true },
+    mainImagePublicId: { type: String },
     completionDate: { type: Date },
     featured: { type: Boolean, default: false },
     publishStatus: { type: String, enum: ['draft', 'published'], default: 'published' },

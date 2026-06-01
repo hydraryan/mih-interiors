@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, type ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Save, Image as ImageIcon, X } from 'lucide-react'
@@ -11,6 +11,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
   const resolvedParams = use(params)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     location: '',
@@ -18,11 +20,18 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
     description: '',
     mainImage: '',
     images: [] as string[],
+    imagePublicIds: [] as string[],
+    mainImagePublicId: '',
     featured: false,
     order: 0
   })
 
   const [newImageUrl, setNewImageUrl] = useState('')
+
+  const getImagePublicId = (images: string[], imagePublicIds: string[], imageUrl: string) => {
+    const index = images.indexOf(imageUrl)
+    return index >= 0 ? imagePublicIds[index] || '' : ''
+  }
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -30,7 +39,12 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
         const res = await fetch(`/api/projects/${resolvedParams.slug}`)
         if (res.ok) {
           const data = await res.json()
-          setFormData(data)
+          setFormData({
+            ...data,
+            images: Array.isArray(data.images) ? data.images : [],
+            imagePublicIds: Array.isArray(data.imagePublicIds) ? data.imagePublicIds : [],
+            mainImagePublicId: data.mainImagePublicId || '',
+          })
         } else {
           router.push('/admin/projects')
         }
@@ -43,7 +57,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
     fetchProject()
   }, [resolvedParams.slug, router])
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
@@ -56,6 +70,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
       setFormData(prev => ({
         ...prev,
         images: [...prev.images, newImageUrl],
+        imagePublicIds: [...prev.imagePublicIds, ''],
         mainImage: prev.mainImage || newImageUrl
       }))
       setNewImageUrl('')
@@ -64,13 +79,61 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
     }
   }
 
+  const uploadImage = async () => {
+    if (!selectedFile) {
+      alert('Choose a photo first.')
+      return
+    }
+
+    if (formData.images.length >= 5) {
+      alert('Maximum 5 photos allowed per project.')
+      return
+    }
+
+    setUploading(true)
+
+    try {
+      const uploadData = new FormData()
+      uploadData.append('file', selectedFile)
+      uploadData.append('folder', formData.type === 'Commercial' ? 'commercial-sites-photos' : 'residential-sites-photos')
+
+      const response = await fetch('/api/admin/media/upload', {
+        method: 'POST',
+        body: uploadData,
+      })
+
+      const body = await response.json()
+      if (!response.ok || !body.success || !body.upload) {
+        throw new Error(body.error || 'Failed to upload photo')
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, body.upload.secure_url],
+        imagePublicIds: [...prev.imagePublicIds, body.upload.public_id],
+        mainImage: prev.mainImage || body.upload.secure_url,
+        mainImagePublicId: prev.mainImagePublicId || body.upload.public_id,
+      }))
+      setSelectedFile(null)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to upload photo')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const removeImage = (index: number) => {
     setFormData(prev => {
       const newImages = prev.images.filter((_, i) => i !== index)
+      const newPublicIds = prev.imagePublicIds.filter((_, i) => i !== index)
+      const removedImage = prev.images[index]
+      const nextMainImage = prev.mainImage === removedImage ? (newImages[0] || '') : prev.mainImage
       return {
         ...prev,
         images: newImages,
-        mainImage: prev.mainImage === prev.images[index] ? (newImages[0] || '') : prev.mainImage
+        imagePublicIds: newPublicIds,
+        mainImage: nextMainImage,
+        mainImagePublicId: nextMainImage ? getImagePublicId(newImages, newPublicIds, nextMainImage) : ''
       }
     })
   }
@@ -92,7 +155,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
         const data = await res.json()
         alert(`Error: ${data.error}`)
       }
-    } catch (error) {
+    } catch {
       alert('Failed to update project')
     } finally {
       setSaving(false)
@@ -191,6 +254,23 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
                     Add
                   </button>
                 </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    className="flex-1 bg-cream-50 border border-cream-200 rounded-md px-4 py-2 text-sm font-body focus:ring-1 focus:ring-brown-800 outline-none file:mr-4 file:rounded-md file:border-0 file:bg-charcoal-800 file:px-4 file:py-2 file:text-white hover:file:bg-charcoal-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={uploadImage}
+                    disabled={uploading}
+                    className="bg-brown-800 text-white px-4 py-2 rounded-md hover:bg-brown-900 transition-colors disabled:opacity-50"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
                 
                 <div className="grid grid-cols-3 gap-3">
                   {formData.images.map((url, idx) => (
@@ -209,7 +289,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ slug: st
                       {formData.mainImage !== url && (
                         <button
                           type="button"
-                          onClick={() => setFormData(p => ({ ...p, mainImage: url }))}
+                          onClick={() => setFormData(p => ({ ...p, mainImage: url, mainImagePublicId: p.imagePublicIds[idx] || '' }))}
                           className="absolute inset-0 bg-black/40 text-white text-[8px] uppercase tracking-widest flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           Set Main
